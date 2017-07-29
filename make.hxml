@@ -1,0 +1,6 @@
+-D PLUSTD_TARGET=flash
+-lib plustd
+--macro addClassPath('/DevProjects/Libs/plustd/assets/thenet-preloader/lib')
+-main Main
+-swf-header 800:600:60:000000
+-swf battery.swf
