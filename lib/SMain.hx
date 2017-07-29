@@ -19,9 +19,9 @@ class SMain extends State {
     ui.listen("displaydrag", elementDrag);
     windows = [];
     [
-       new WTest(10, 10)
-      ,new WTest(40, 40)
-      ,new WTest(50, 20)
+       new WPortrait()
+      ,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
+      //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
   }
   
@@ -45,8 +45,9 @@ class SMain extends State {
     var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
     if (dname.length == 3 && dname[1] == "title" && dname[2] == "close") {
-      focused = null;
       removeWindow(window);
+    } else if (dname.length >= 4 && dname[2] == "clip") {
+      window.elementClick(dname.slice(3), event);
     }
     return true;
   }
@@ -58,11 +59,16 @@ class SMain extends State {
     var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
     if (dname.length == 2 && dname[1] == "title") {
+      var ox = window.x;
+      var oy = window.y;
       window.x += event.rx;
       window.y += event.ry;
-      window.x = FM.clampI(window.x, 0, SCREEN_WIDTH - window.w);
-      window.y = FM.clampI(window.y, 0, SCREEN_HEIGHT - window.h);
+      window.x = FM.clampI(window.x, 0, SCREEN_WIDTH - window.w - Interface.FRAME_WIDTH);
+      window.y = FM.clampI(window.y, 0, SCREEN_HEIGHT - window.h - Interface.FRAME_HEIGHT);
+      window.drag(window.x - ox, window.y - oy);
       updateWindow(window);
+    } else if (dname.length >= 4 && dname[2] == "clip") {
+      window.elementDrag(dname.slice(3), event);
     }
     return true;
   }
@@ -77,21 +83,28 @@ class SMain extends State {
   }
   
   private function updateWindow(win:Window):Void {
-    if (ui.get(win.id) != null) {
-      ui.list.remove(ui.get(win.id));
-      if (win.focused) {
-        windows.remove(win);
+    win.wm = this;
+    ui.list.push(if (ui.get(win.id) != null) {
+        var rem = ui.get(win.id);
+        ui.list.remove(rem);
+        if (win.focused) {
+          windows.remove(win);
+          windows.push(win);
+        }
+        rem;
+      } else {
         windows.push(win);
-      }
-    } else {
-      windows.push(win);
-    }
-    ui.list.push(win.toUI());
+        win.toUI();
+      });
+    win.update();
     reorder();
     ui.update();
   }
   
-  private function removeWindow(win:Window):Void {
+  public function removeWindow(win:Window):Void {
+    if (win == focused) {
+      focused = null;
+    }
     if (ui.get(win.id) != null) {
       ui.list.remove(ui.get(win.id));
       windows.remove(win);
@@ -111,6 +124,9 @@ class SMain extends State {
   }
   
   override public function tick() {
+    for (w in windows) {
+      w.tick();
+    }
     app.bitmap.fill(Main.pal[3]);
     ui.render(app.bitmap);
   }

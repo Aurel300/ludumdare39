@@ -21,7 +21,10 @@ class Window {
   public var wMax:Int;
   public var hMax:Int;
   public var contents:Array<UIElement>;
+  public var contentsMap:Map<String, UIElement>;
   
+  public var wm:SMain;
+  public var displayCh:Array<Display>;
   public var display:Display;
   
   public var z(never, set):Int;
@@ -53,8 +56,32 @@ class Window {
     contents = [];
   }
   
+  var lines = 15;
+  
+  public function tick():Void {
+    if (displayCh == null) {
+      return;
+    }
+    for (c in displayCh) {
+      contentsMap.get(c.name).tick(c);
+    }
+  }
+  
+  private function remap():Void {
+    contentsMap = new Map<String, UIElement>();
+    for (c in contents) {
+      contentsMap.set(c.id, c);
+    }
+  }
+  
+  public function update():Void {
+    display.x = x;
+    display.y = y;
+    Interface.updateWindowTitle(display.children[1], focused, w);
+  }
+  
   public function toUI():Display {
-    return display = DisplayBuilder.build([
+    display = DisplayBuilder.build([
         Panel(null, [
              WithName(id)
             ,WithXY(x, y)
@@ -62,5 +89,28 @@ class Window {
             ,Interface.windowTitle(icon, title, focused, minimisable, closable, w)
           ])
       ])[0];
+    display.children[0].children[0].sort = false;
+    displayCh = display.children[0].children[0].children;
+    return display;
+  }
+  
+  public function drag(rx:Int, ry:Int):Void {}
+  
+  public function elementClick(dname:Array<String>, event:EDisplayClick):Void {
+    for (c in contents) {
+      if (c.id == dname[0]) {
+        c.click(dname, event);
+        break;
+      }
+    }
+  }
+  
+  public function elementDrag(dname:Array<String>, event:EDisplayDrag):Void {
+    for (c in contents) {
+      if (c.id == dname[0]) {
+        c.drag(dname, event);
+        break;
+      }
+    }
   }
 }

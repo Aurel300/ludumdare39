@@ -7,3 +7,5 @@
 | 5 | White |
 | 6 | Window title no focus |
 | 7 | Window title focused |
+| 8 | Red (wrong) |
+| 9 | Green (correct) |

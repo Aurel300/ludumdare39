@@ -6,5 +6,10 @@ class WTest extends Window {
     this.x = x;
     this.y = y;
     id = "test" + x;
+    contents = [
+         new EButtonText("test", 5, 5, 80, 20, "bla")
+        ,new ESlider("slider", 5, 30, 80, 20, true)
+      ];
+    remap();
   }
 }

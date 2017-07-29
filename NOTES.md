@@ -34,7 +34,6 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
    - [ ] ui
    - [ ] player
    - [ ] rooms + storycards
-   - [ ] puzzle
  - [ ] sound effects
    - [ ] ui
    - [ ] dialogues
@@ -49,3 +48,5 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
  - [ ] puzzle gameplay
    - [ ] concepts [`doc/PUZZLE.md`](doc/PUZZLE.md)
    - [ ] balance / qa
+   - [x] lockpick 5 / 5?
+   - [x] rapid 1 / 1
