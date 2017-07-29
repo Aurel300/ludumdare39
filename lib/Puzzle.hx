@@ -7,7 +7,7 @@ class Puzzle {
     this.id = id;
   }
   
-  public function spawn():Window {
+  public function spawn():Array<Window> {
     return null;
   }
   

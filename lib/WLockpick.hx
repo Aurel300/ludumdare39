@@ -14,8 +14,8 @@ class WLockpick extends Window {
     this.puzzle = puzzle;
     fallPh = Phaser.linear(24);
     x = y = 50;
-    w = 150; contentW = 180;
-    h = contentH = 46; contentH = 100;
+    w = contentW = 150;
+    h = contentH = 46;
     id = "lockpick";
     title = '${puzzle.id}.pzl';
     icon = Icon.KEY;

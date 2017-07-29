@@ -12,7 +12,7 @@ fill the progress bar.
 Be quick!";
   }
   
-  override public function spawn():Window {
-    return new WRapid(this);
+  override public function spawn():Array<Window> {
+    return [new WRapid(this)];
   }
 }

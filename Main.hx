@@ -28,12 +28,13 @@ class Main extends Application {
             ,Embed.getBitmap("interface", "png/interface.png")
             ,Embed.getBitmap("icons", "png/icons.png")
             ,Embed.getBitmap("face", "png/face.png")
+            ,Embed.getBitmap("assembly", "png/assembly.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
                 pal = [ for (i in 0...32) itf.get(i * 8, 0) ];
                 return false;
               })
-            ,new AssetBind(["console_font", "pal", "icons", "face"], (am, _) -> {
+            ,new AssetBind(["console_font", "pal", "icons", "face", "assembly"], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 font = [ for (p in pal)
                     Font.makeMonospaced(
@@ -46,6 +47,7 @@ class Main extends Application {
                   ];
                 Interface.init(am.getBitmap("interface"), am.getBitmap("icons"));
                 WPortrait.init(am.getBitmap("face"));
+                WAssembly.init(am.getBitmap("assembly"));
                 return false;
               })
           ])
@@ -61,6 +63,8 @@ class Main extends Application {
         ,new PLockpick(3)
         ,new PLockpick(4)
         ,new PRapid(0)
+        ,new PAssembly(0)
+        ,new PAssembly(1)
       ];
     puzzlesMap = new Map<String, Puzzle>();
     for (p in puzzles) {

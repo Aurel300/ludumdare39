@@ -39,7 +39,7 @@ down over time!";
       });
   }
   
-  override public function spawn():Window {
-    return new WLockpick(this);
+  override public function spawn():Array<Window> {
+    return [new WLockpick(this)];
   }
 }

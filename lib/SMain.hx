@@ -20,9 +20,10 @@ class SMain extends State {
     windows = [];
     [
        new WPortrait()
-      ,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
+      //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
       //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
+    Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
   }
   
   private function elementFocus(event:{display:Display}):Window {

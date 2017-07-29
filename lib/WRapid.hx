@@ -14,8 +14,8 @@ class WRapid extends Window {
     this.puzzle = puzzle;
     fallPh = Phaser.linear(4);
     x = y = 50;
-    w = 150;
-    h = 22;
+    w = contentW = 150;
+    h = contentH = 22;
     id = "rapid";
     title = '${puzzle.id}.pzl';
     icon = Icon.KEY;

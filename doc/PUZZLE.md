@@ -14,7 +14,7 @@ A grid of blocks is shown, rows and columns can be slided around cyclically. Onc
  - 2x3 A radio button set ("Fusebox: / x broken / - fixed")
  - 4x3 A slider ("Fusebox functionality: / 0% |------- 100%")
 
-## Rapid clicker puzzles ##
+## Rapid clicker puzzle ##
 
 A button is shown with various text prompts ("Fix", "Hit with a wrench", "Restore", "Fixify", ...) underneath a progress bar. The button needs to be clicked rapidly until the progress bar fills up.
 
@@ -35,3 +35,7 @@ A "lockpicking" puzzle. The player cannot directly control a set of sliders (the
 (various sizes)
 
 A set of windows is shown to the player. They need to be arranged in a specific arrangement by dragging, possibly resized.
+
+## Sign puzzle ##
+
+A window with a large scrollable content is shown. The content has signs / clues which tell the player which direction to scroll next. There are buttons in the content, most of which are fake.
