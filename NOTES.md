@@ -30,6 +30,7 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
 ## TODO ##
 
  - [ ] graphics
+   - [ ] palette [`doc/PAL.md`](doc/PAL.md)
    - [ ] ui
    - [ ] player
    - [ ] rooms + storycards
@@ -46,5 +47,5 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
    - [ ] outline
    - [ ] script
  - [ ] puzzle gameplay
-   - [ ] concepts
+   - [ ] concepts [`doc/PUZZLE.md`](doc/PUZZLE.md)
    - [ ] balance / qa
