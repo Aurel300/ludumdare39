@@ -7,6 +7,7 @@ import sk.thenet.app.asset.Trigger as AssetTrigger;
 import sk.thenet.bmp.*;
 import sk.thenet.bmp.manip.Recolour;
 import sk.thenet.plat.Platform;
+import lib.*;
 
 class Main extends Application {
   // Globals
@@ -23,22 +24,24 @@ class Main extends Application {
         ,Assets([
              Embed.getBitmap("console_font", "png/font.png")
             ,Embed.getBitmap("interface", "png/interface.png")
+            ,Embed.getBitmap("icons", "png/icons.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
-                pal = [ for (i in 0...6) itf.get(i * 8, 0) ];
+                pal = [ for (i in 0...32) itf.get(i * 8, 0) ];
                 return false;
               })
-            ,new AssetBind(["console_font", "pal"], (am, _) -> {
+            ,new AssetBind(["console_font", "pal", "icons"], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 font = [ for (p in pal)
                     Font.makeMonospaced(
                          raw >> new Recolour(p)
                         ,32, 160
-                        ,10, 18
+                        ,8, 16
                         ,32
                         ,-3, 0
                       )
                   ];
+                Interface.init(am.getBitmap("interface"), am.getBitmap("icons"));
                 return false;
               })
           ])

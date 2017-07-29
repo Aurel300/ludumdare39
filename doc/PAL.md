@@ -5,3 +5,5 @@
 | 0 | Black |
 | 1 ... 4 | Grays (darkest to lightest) |
 | 5 | White |
+| 6 | Window title no focus |
+| 7 | Window title focused |
