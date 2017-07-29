@@ -44,10 +44,17 @@ class SMain extends State {
   private function elementClick(event:EDisplayClick):Bool {
     var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
-    if (dname.length == 3 && dname[1] == "title" && dname[2] == "close") {
+    switch dname {
+      case [_, "title", "close"]:
       removeWindow(window);
-    } else if (dname.length >= 4 && dname[2] == "clip") {
-      window.elementClick(dname.slice(3), event);
+      
+      case [_, "frame", "scrollLeft"]: scrollWindow(window, -5, 0);
+      case [_, "frame", "scrollRight"]: scrollWindow(window, 5, 0);
+      case [_, "frame", "scrollUp"]: scrollWindow(window, 0, -5);
+      case [_, "frame", "scrollDown"]: scrollWindow(window, 0, 5);
+      
+      case _ if (dname.length >= 4 && dname[2] == "clip"):
+       window.elementClick(dname.slice(3), event);
     }
     return true;
   }
@@ -58,7 +65,8 @@ class SMain extends State {
     }
     var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
-    if (dname.length == 2 && dname[1] == "title") {
+    switch dname {
+      case [_, "title"]:
       var ox = window.x;
       var oy = window.y;
       window.x += event.rx;
@@ -67,7 +75,11 @@ class SMain extends State {
       window.y = FM.clampI(window.y, 0, SCREEN_HEIGHT - window.h - Interface.FRAME_HEIGHT);
       window.drag(window.x - ox, window.y - oy);
       updateWindow(window);
-    } else if (dname.length >= 4 && dname[2] == "clip") {
+      
+      case [_, "frame", "scrollBarX"]: scrollWindow(window, event.rx, 0);
+      case [_, "frame", "scrollBarY"]: scrollWindow(window, 0, event.ry);
+      
+      case _ if (dname.length >= 4 && dname[2] == "clip"):
       window.elementDrag(dname.slice(3), event);
     }
     return true;
@@ -80,6 +92,19 @@ class SMain extends State {
       }
     }
     return null;
+  }
+  
+  private function scrollWindow(win:Window, sx:Int, sy:Int):Void {
+    var panel = ui.get(win.id + ".frame.clip").children[0];
+    var scrollableX = win.contentW - (win.w - 10);
+    var scrollableY = win.contentH - (win.h - 10);
+    panel.x = FM.clampI(panel.x - sx, -scrollableX, 0);
+    panel.y = FM.clampI(panel.y - sy, -scrollableY, 0);
+    if (sx != 0) {
+      ui.get(win.id + ".frame.scrollBarX").x = 15 + FM.floor((panel.x / -scrollableX) * (win.w - 40));
+    } else if (sy != 0) {
+      ui.get(win.id + ".frame.scrollBarY").y = 23 + FM.floor((panel.y / -scrollableY) * (win.h - 30));
+    }
   }
   
   private function updateWindow(win:Window):Void {

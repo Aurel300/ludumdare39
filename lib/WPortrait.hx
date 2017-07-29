@@ -45,7 +45,7 @@ class WPortrait extends Window {
   public function new() {
     super();
     x = y = 50;
-    w = h = SIZE + MARGIN;
+    w = h = contentW = contentH = SIZE + MARGIN;
     id = "portrait";
     title = "Face";
     icon = Icon.FACE;

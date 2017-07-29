@@ -22,6 +22,8 @@ class Window {
   public var hMax:Int;
   public var contents:Array<UIElement>;
   public var contentsMap:Map<String, UIElement>;
+  public var contentW:Int;
+  public var contentH:Int;
   
   public var wm:SMain;
   public var displayCh:Array<Display>;
@@ -41,8 +43,8 @@ class Window {
     icon = Icon.NORMAL;
     x = 10;
     y = 10;
-    w = 300;
-    h = 100;
+    w = contentW = 300;
+    h = contentH = 100;
     focused = false;
     minimised = false;
     resizable = false;
@@ -55,8 +57,6 @@ class Window {
     hMax = 30;
     contents = [];
   }
-  
-  var lines = 15;
   
   public function tick():Void {
     if (displayCh == null) {
@@ -85,12 +85,12 @@ class Window {
         Panel(null, [
              WithName(id)
             ,WithXY(x, y)
-            ,Interface.windowFrame(w, h, [ for (c in contents) c.toUI() ])
+            ,Interface.windowFrame(w, h, contentW, contentH, [ for (c in contents) c.toUI() ])
             ,Interface.windowTitle(icon, title, focused, minimisable, closable, w)
           ])
       ])[0];
-    display.children[0].children[0].sort = false;
-    displayCh = display.children[0].children[0].children;
+    display.children[0].children[0].children[0].sort = false;
+    displayCh = display.children[0].children[0].children[0].children;
     return display;
   }
   
