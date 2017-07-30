@@ -5,7 +5,9 @@ import sk.thenet.FM;
 import sk.thenet.ui.*;
 
 class WFolder extends Window {
-  public function new(id:String, title:String, x:Int, y:Int, iw:Int, ih:Int) {
+  public var folder:EFolder;
+  
+  public function new(id:String, title:String, x:Int, y:Int, iw:Int, ih:Int, icons:Array<Icon>) {
     super();
     this.x = x;
     this.y = y;
@@ -14,14 +16,17 @@ class WFolder extends Window {
     this.id = id;
     this.title = title;
     icon = Icon.DOCUMENT;
-    contents = [
-        new EFolder("folder", 2, 2, iw, ih, [Icon.FACE])
-      ];
+    folder = new EFolder("folder", 2, 2, iw, ih, icons);
+    contents = [folder];
     remap();
   }
   
   override public function update():Void {
     super.update();
-    (cast contents[0]:EFolder).wm = wm;
+    folder.wm = wm;
+    if (!focused) {
+      folder.selected = -1;
+      folder.doUpdate = true;
+    }
   }
 }

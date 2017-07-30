@@ -44,7 +44,8 @@ class WPortrait extends Window {
   
   public function new() {
     super();
-    x = y = 50;
+    x = 320;
+    y = 150;
     w = h = contentW = contentH = SIZE + MARGIN;
     id = "portrait";
     title = "Face";
@@ -56,6 +57,7 @@ class WPortrait extends Window {
     phHair = Phaser.linear(64, 32);
     phHair.phase = 14;
     bg = Platform.createBitmap(SIZE + MARGIN, SIZE + MARGIN, 0);
+    close = () -> { show = false; };
     createBG();
     contents = [
         new EBitmap("bmp", 0, 0, bg)

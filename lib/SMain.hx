@@ -16,38 +16,69 @@ class SMain extends State {
   
   public function new(app:Main) {
     super("main", app);
-    desktop = new EFolder("desktop", 5, 5, 1, 2, []);
+    desktop = new EFolder("desktop", 5, 5, 1, 2, [Icon.FACE]);
+    desktop.dragFunc = (_, _) -> { return true; };
+    desktop.doubleFunc = (folder) -> {
+      switch (folder.icons[folder.selected]) {
+        case FACE:
+        var win = getWindow("portrait");
+        win.show = true;
+        focusWindow(win);
+        
+        case _:
+      }
+      return true;
+    };
     desktop.wm = this;
     ui = new UI(DisplayBuilder.build([
         desktop.toUI()
       ]));
+    ui.doubleClick = 13;
     ui.listen("displayclick", elementClick);
     ui.listen("displaydrag", elementDrag);
     ui.listen("displaydrop", elementDrop);
     windows = [];
     [
        new WPortrait()
-      ,new WFolder("fold", "Folder", 50, 50, 3, 2)
+      /*,new WText("test", "Info", 100, 50,
+"$M\"\"Welcome
+$A_____________________________
+Welcome to Battery City!")*/
+      //,new WFolder("fold", "Folder", 50, 50, 3, 2)
       //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
       //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
     //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
     //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
+    Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
   }
   
-  private function elementFocus(event:{display:Display}):Window {
-    var dname = event.display.fullName.split(".");
-    var window = getWindow(dname[0]);
-    if (focused != window) {
+  public function focusWindow(win:Window):Void {
+    if (focused != win) {
       if (focused != null) {
         focused.focused = false;
         updateWindow(focused);
         focused = null;
       }
-      focused = window;
+      focused = win;
       focused.focused = true;
+      if (focused.minimised) {
+        focused.minimise();
+        clampWindow(win);
+      }
       updateWindow(focused);
     }
+  }
+  
+  public function clampWindow(win:Window):Void {
+    win.x = FM.clampI(win.x, 0, SCREEN_WIDTH - win.w - Interface.FRAME_WIDTH);
+    win.y = FM.clampI(win.y, 0, SCREEN_HEIGHT - (win.minimised ? -4 : win.h) - Interface.FRAME_HEIGHT);
+  }
+  
+  private function elementFocus(event:{display:Display}):Window {
+    var dname = event.display.fullName.split(".");
+    var window = getWindow(dname[0]);
+    focusWindow(window);
     return focused;
   }
   
@@ -64,8 +95,11 @@ class SMain extends State {
     }
     var window = elementFocus(event);
     switch dname {
-      case [_, "title", "close"]:
-      removeWindow(window);
+      case [_, "title", "close"]: window.close();
+      case [_, "title", "minimise"]:
+      window.minimise();
+      clampWindow(window);
+      ui.update();
       
       case [_, "frame", "scrollLeft"]: scrollWindow(window, -5, 0);
       case [_, "frame", "scrollRight"]: scrollWindow(window, 5, 0);
@@ -73,7 +107,7 @@ class SMain extends State {
       case [_, "frame", "scrollDown"]: scrollWindow(window, 0, 5);
       
       case _ if (dname.length >= 4 && dname[2] == "clip"):
-       window.elementClick(dname.slice(3), event);
+      window.elementClick(dname.slice(3), event);
     }
     return true;
   }
@@ -99,8 +133,7 @@ class SMain extends State {
       var oy = window.y;
       window.x += event.rx;
       window.y += event.ry;
-      window.x = FM.clampI(window.x, 0, SCREEN_WIDTH - window.w - Interface.FRAME_WIDTH);
-      window.y = FM.clampI(window.y, 0, SCREEN_HEIGHT - window.h - Interface.FRAME_HEIGHT);
+      clampWindow(window);
       window.drag(window.x - ox, window.y - oy);
       updateWindow(window);
       
@@ -157,7 +190,7 @@ class SMain extends State {
     }
   }
   
-  private function updateWindow(win:Window):Void {
+  public function updateWindow(win:Window):Void {
     win.wm = this;
     ui.list.push(if (ui.get(win.id) != null) {
         var rem = ui.get(win.id);
@@ -225,7 +258,7 @@ class SMain extends State {
   override public function mouseUp(mx:Int, my:Int) {
     ui.mouseUp(mx, my);
     if (dragFrom != null) {
-      dragFrom.cancelDrag();
+      dragFrom.acceptDrop(null);
     }
   }
 }

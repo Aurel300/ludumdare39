@@ -58,9 +58,20 @@ class PAssembly extends Puzzle {
   }
   
   override public function spawn():Array<Window> {
+    if (windows != null) {
+      for (w in windows) {
+        w.removeSelf();
+      }
+    }
     windows = [ for (i in 0...pieces[num].length) new WAssembly(this, i) ];
     check();
     return cast windows;
+  }
+  
+  override public function solve():Void {
+    super.solve();
+    windows.map(w -> w.removeSelf());
+    windows = null;
   }
   
   public function check():Void {

@@ -7,7 +7,7 @@ import sk.thenet.bmp.manip.*;
 import sk.thenet.geom.Point2DI;
 import sk.thenet.plat.Platform;
 import sk.thenet.ui.*;
-import sk.thenet.ui.disp.SolidPanel;
+import sk.thenet.ui.disp.*;
 import sk.thenet.ui.DisplayBuilder.DisplayType;
 
 class Interface {
@@ -54,14 +54,17 @@ class Interface {
       icopos += 10;
     }
     barBG = bf >> new Cut(20, 32, 10, 10);
-    icons = new Vector<Bitmap>(13);
-    iconsSel = new Vector<Bitmap>(13);
-    iconsSmall = new Vector<Bitmap>(13);
-    for (i in 0...icons.length) {
-      icons[i] = bf >> new Cut(48 + i * 16, 8, 16, 16);
+    icons = new Vector<Bitmap>(14);
+    iconsSel = new Vector<Bitmap>(14);
+    iconsSmall = new Vector<Bitmap>(14);
+    icons[0] = Platform.createBitmap(16, 16, 0);
+    iconsSel[0] = Platform.createBitmap(16, 16, Main.pal[7]);
+    iconsSmall[0] = Platform.createBitmap(16, 16, 0);
+    for (i in 1...icons.length) {
+      icons[i] = bf >> new Cut(88 + ((i - 1) % 4) * 16, ((i - 1) >> 2) * 16, 16, 16);
       iconsSel[i] = Platform.createBitmap(16, 16, Main.pal[7]).fluent
-        << new Blit(bf >> new Cut(48 + i * 16, 8, 16, 16));
-      iconsSmall[i] = bf >> new Cut(48 + i * 16, 24, 8, 8);
+        << new Blit(bf >> new Cut(88 + ((i - 1) % 4) * 16, ((i - 1) >> 2) * 16, 16, 16));
+      iconsSmall[i] = bf >> new Cut(152 + ((i - 1) % 4) * 8, ((i - 1) >> 2) * 8, 8, 8);
     }
   }
   
@@ -96,38 +99,45 @@ class Interface {
             ,WithXY(5, 13)
             ,Panel(null, ch)
           ])
-      ].concat(scroll ? [
-        BoxPanel(barBG, buttonCut1, buttonCut2, w - 30, 10, [
-            WithXY(15, h + 3)
+        ,BoxPanel(barBG, buttonCut1, buttonCut2, w - 30, 10, [
+             WithXY(15, h + 3)
+            ,WithShow(scroll)
           ])
         ,BoxPanel(barBG, buttonCut1, buttonCut2, 10, h - 20, [
-            WithXY(w - 5, 23)
+             WithXY(w - 5, 23)
+            ,WithShow(scroll)
           ])
         ,button10Icon("left", [
              WithXY(5, h + 3)
             ,WithName("scrollLeft")
+            ,WithShow(scroll)
           ])
         ,button10Icon("right", [
              WithXY(w - 15, h + 3)
             ,WithName("scrollRight")
+            ,WithShow(scroll)
           ])
         ,button10Icon("bg", [
              WithXY(15, h + 3)
             ,WithName("scrollBarX")
+            ,WithShow(scroll)
           ])
         ,button10Icon("up", [
              WithXY(w - 5, 13)
             ,WithName("scrollUp")
+            ,WithShow(scroll)
           ])
         ,button10Icon("down", [
              WithXY(w - 5, h + 3)
             ,WithName("scrollDown")
+            ,WithShow(scroll)
           ])
         ,button10Icon("bg", [
              WithXY(w - 5, 23)
             ,WithName("scrollBarY")
+            ,WithShow(scroll)
           ])
-      ] : []));
+      ]);
   }
   
   public static function windowTitle(
@@ -155,6 +165,30 @@ class Interface {
             ,WithXY(w - 6 - (closable ? 10 : 0), 0)
           ])
       ] : []));
+  }
+  
+  public static function updateWindowFrame(
+    display:Display, minimised:Bool, w:Int, h:Int, contentW:Int, contentH:Int
+  ):Void {
+    var panel = (cast display:BoxPanel);
+    panel.children[0].show = !minimised;
+    if (minimised) {
+      if (panel.h != 14) {
+        panel.h = 14;
+        panel.update();
+      }
+    } else {
+      if (panel.h == 14) {
+        panel.h = h + FRAME_HEIGHT;
+        panel.update();
+      }
+      var scroll = contentW > w || contentH > h;
+      panel.children[0].w = w - (scroll ? 10 : 0);
+      panel.children[0].h = h - (scroll ? 10 : 0);
+      for (i in 1...9) {
+        panel.children[i].show = scroll;
+      }
+    }
   }
   
   public static function updateWindowTitle(

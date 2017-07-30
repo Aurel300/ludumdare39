@@ -15,4 +15,5 @@ abstract Icon(Int) from Int to Int {
   var FACE = 10;
   var DOCUMENT = 11;
   var BATTERY = 12;
+  var BAG = 13;
 }

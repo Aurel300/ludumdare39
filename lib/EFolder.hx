@@ -15,6 +15,8 @@ class EFolder extends UIElement {
   public var draggedFrom:Int;
   public var draggedTo:Int;
   public var draggedIcon:Icon;
+  public var dragFunc:EFolder->EFolder->Bool;
+  public var doubleFunc:EFolder->Bool;
   
   public function new(
     id:String, x:Int, y:Int, iw:Int, ih:Int, icons:Array<Icon>
@@ -46,9 +48,16 @@ class EFolder extends UIElement {
   override public function click(dname:Array<String>, event:EDisplayClick):Void {
     var index = iconIndex(dname);
     if (index == -1 || icons[index] == NONE) {
+      selected = -1;
+      doUpdate = true;
       return;
     }
     selected = index;
+    if (event.double && doubleFunc != null) {
+      if (doubleFunc(this)) {
+        selected = -1;
+      }
+    }
     doUpdate = true;
   }
   
@@ -78,14 +87,20 @@ class EFolder extends UIElement {
   }
   
   public function acceptDrop(onto:EFolder):Void {
+    wm.ui.cursors.shift();
+    wm.dragFrom = null;
+    doUpdate = true;
+    selected = -1;
     if (onto == null) {
       cancelDrag();
       return;
     }
-    wm.ui.cursors.shift();
-    wm.dragFrom = null;
-    selected = -1;
-    doUpdate = true;
+    if (dragFunc != null) {
+      if (dragFunc(this, onto)) {
+        cancelDrag();
+      }
+      return;
+    }
     onto.icons[onto.draggedTo] = draggedIcon;
     onto.selected = onto.draggedTo;
     onto.doUpdate = true;
@@ -93,12 +108,11 @@ class EFolder extends UIElement {
     draggedIcon = NONE;
   }
   
-  public function cancelDrag():Void {
-    wm.ui.cursors.shift();
-    wm.dragFrom = null;
+  public function cancelDrag(?defocus:Bool = false):Void {
     icons[draggedFrom] = draggedIcon;
-    selected = draggedFrom;
-    doUpdate = true;
+    if (!defocus) {
+      selected = draggedFrom;
+    }
     draggedFrom = -1;
     draggedIcon = NONE;
   }
@@ -123,9 +137,14 @@ class EFolder extends UIElement {
   
   override public function drop(dname:Array<String>, event:EDisplayDrop):EFolder {
     var index = iconIndex(dname);
-    if (index == -1 || icons[index] != NONE) {
-      draggedTo = 0;
-      return this;
+    if (index == -1 || (icons[index] != NONE && dragFunc == null)) {
+      for (i in 0...icons.length) {
+        if (icons[i] == NONE) {
+          draggedTo = i;
+          return this;
+        }
+      }
+      return null;
     }
     draggedTo = index;
     return this;

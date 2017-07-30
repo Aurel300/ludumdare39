@@ -51,11 +51,12 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
    - [x] lockpick 5 / 5?
    - [x] rapid 1 / 1
    - [x] assembly 2 / 2
+   - [ ] maze 1 / 3?
  - [ ] ui
    - [x] windows
    - [x] scrolling
    - [x] elements
    - [ ] modals
-   - [ ] drag 'n drop icons
-     - [x] desktop
+   - [x] drag 'n drop icons
+     - [ ] desktop
      - [ ] overworld

@@ -25,9 +25,13 @@ class EText extends UIElement {
     updateText();
   }
   
-  private function updateText():Void {
+  public function updateText():Void {
     bmp.fill(0);
-    textHeight = Main.font[0].render(bmp, 0, 0, text).y;
+    textHeight = Main.font[1].render(bmp, 0, 0, text, Main.font).y;
+    if (textHeight > bmp.height) {
+      bmp = Platform.createBitmap(w, textHeight, 0);
+      textHeight = Main.font[1].render(bmp, 0, 0, text, Main.font).y;
+    }
   }
   
   override public function update(el:Display):Void {

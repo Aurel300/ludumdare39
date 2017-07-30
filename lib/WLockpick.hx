@@ -93,7 +93,7 @@ class WLockpick extends Window {
       check();
       
       case "unlock":
-      wm.removeWindow(this);
+      removeSelf();
       puzzle.solve();
     }
   }

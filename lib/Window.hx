@@ -24,6 +24,7 @@ class Window {
   public var contentsMap:Map<String, UIElement>;
   public var contentW:Int;
   public var contentH:Int;
+  public var show:Bool;
   
   public var wm:SMain;
   public var displayCh:Array<Display>;
@@ -55,16 +56,28 @@ class Window {
     hMin = 30;
     wMax = 30;
     hMax = 30;
+    show = true;
     contents = [];
   }
   
   public function tick():Void {
+    if (display != null) {
+      display.x = x;
+      display.y = y;
+      display.show = show;
+      Interface.updateWindowFrame(display.children[0], minimised, w, h, contentW, contentH);
+      Interface.updateWindowTitle(display.children[1], focused, w);
+    }
     if (displayCh == null) {
       return;
     }
     for (c in displayCh) {
       contentsMap.get(c.name).tick(c);
     }
+  }
+  
+  public function removeSelf():Void {
+    wm.removeWindow(this);
   }
   
   private function remap():Void {
@@ -74,11 +87,7 @@ class Window {
     }
   }
   
-  public function update():Void {
-    display.x = x;
-    display.y = y;
-    Interface.updateWindowTitle(display.children[1], focused, w);
-  }
+  public function update():Void {}
   
   public function toUI():Display {
     display = DisplayBuilder.build([
@@ -92,6 +101,14 @@ class Window {
     display.children[0].children[0].children[0].sort = false;
     displayCh = display.children[0].children[0].children[0].children;
     return display;
+  }
+  
+  public dynamic function close():Void {
+    removeSelf();
+  }
+  
+  public dynamic function minimise():Void {
+    minimised = !minimised;
   }
   
   public function drag(rx:Int, ry:Int):Void {}
