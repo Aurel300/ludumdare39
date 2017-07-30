@@ -40,7 +40,7 @@ class Window {
   public function new() {
     id = null;
     title = "Untitled";
-    icon = Icon.NORMAL;
+    icon = Icon.DOCUMENT;
     x = 10;
     y = 10;
     w = contentW = 300;
@@ -112,5 +112,15 @@ class Window {
         break;
       }
     }
+  }
+  
+  public function elementDrop(dname:Array<String>, event:EDisplayDrop):EFolder {
+    for (c in contents) {
+      if (c.id == dname[0]) {
+        return c.drop(dname, event);
+        break;
+      }
+    }
+    return null;
   }
 }

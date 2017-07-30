@@ -28,4 +28,8 @@ class UIElement {
   public function click(dname:Array<String>, event:EDisplayClick):Void {}
   
   public function drag(dname:Array<String>, event:EDisplayDrag):Void {}
+  
+  public function drop(dname:Array<String>, event:EDisplayDrop):EFolder {
+    return null;
+  }
 }

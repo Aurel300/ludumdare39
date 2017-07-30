@@ -95,7 +95,7 @@ class PAssembly extends Puzzle {
         }
       }
     }
-    if (incorrect > 0) {
+    if (incorrect == 0) {
       solve();
     }
   }

@@ -14,6 +14,12 @@ class Interface {
   public static inline var FRAME_WIDTH = 10;
   public static inline var FRAME_HEIGHT = 18;
   
+  public static var cursor:Cursor;
+  public static var icons:Vector<Bitmap>;
+  public static var iconsSel:Vector<Bitmap>;
+  public static var iconsSmall:Vector<Bitmap>;
+  
+  static var cursors:Vector<Bitmap>;
   static var frame:Bitmap;
   static var frameCut1:Point2DI;
   static var frameCut2:Point2DI;
@@ -22,11 +28,12 @@ class Interface {
   static var buttons:Map<String, Vector<Bitmap>>;
   static var buttonIcons:Map<String, Bitmap>;
   static var barBG:Bitmap;
-  static var icons:Vector<Bitmap>;
   
-  public static function init(itf:Bitmap, ico:Bitmap):Void {
+  public static function init(itf:Bitmap):Void {
     var bf = itf.fluent;
     frame = bf >> new Cut(24, 8, 24, 24);
+    cursors = Vector.fromArrayCopy([ for (i in 0...2) bf >> new Cut(48 + i * 16, 24, 16, 16) ]);
+    cursor = new Cursor(cursors[0], -1, -2);
     frameCut1 = new Point2DI(5, 5);
     frameCut2 = new Point2DI(19, 19);
     buttonCut1 = new Point2DI(1, 1);
@@ -47,10 +54,14 @@ class Interface {
       icopos += 10;
     }
     barBG = bf >> new Cut(20, 32, 10, 10);
-    bf = ico.fluent;
-    icons = new Vector<Bitmap>(8);
+    icons = new Vector<Bitmap>(13);
+    iconsSel = new Vector<Bitmap>(13);
+    iconsSmall = new Vector<Bitmap>(13);
     for (i in 0...icons.length) {
-      icons[i] = bf >> new Cut(i * 8, 0, 8, 8);
+      icons[i] = bf >> new Cut(48 + i * 16, 8, 16, 16);
+      iconsSel[i] = Platform.createBitmap(16, 16, Main.pal[7]).fluent
+        << new Blit(bf >> new Cut(48 + i * 16, 8, 16, 16));
+      iconsSmall[i] = bf >> new Cut(48 + i * 16, 24, 8, 8);
     }
   }
   
@@ -127,7 +138,7 @@ class Interface {
     return SolidPanel(Main.pal[focused ? 7 : 6], w + 4, 10, [
          WithName("title")
         ,WithXY(3, 3)
-        ,Panel(icons[icon], [
+        ,Panel(iconsSmall[icon], [
             WithXY(1, 1)
           ])
         ,Panel(text, [

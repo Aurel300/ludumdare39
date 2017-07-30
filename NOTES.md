@@ -32,7 +32,7 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
  - [ ] graphics
    - [ ] palette [`doc/PAL.md`](doc/PAL.md)
    - [ ] ui
-   - [ ] player
+   - [x] player
    - [ ] rooms + storycards
  - [ ] sound effects
    - [ ] ui
@@ -56,3 +56,6 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
    - [x] scrolling
    - [x] elements
    - [ ] modals
+   - [ ] drag 'n drop icons
+     - [x] desktop
+     - [ ] overworld

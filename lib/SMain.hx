@@ -11,19 +11,28 @@ class SMain extends State {
   public var ui:UI;
   public var windows:Array<Window>;
   public var focused:Window;
+  public var desktop:EFolder;
+  public var dragFrom:EFolder;
   
   public function new(app:Main) {
     super("main", app);
-    ui = new UI([]);
+    desktop = new EFolder("desktop", 5, 5, 1, 2, []);
+    desktop.wm = this;
+    ui = new UI(DisplayBuilder.build([
+        desktop.toUI()
+      ]));
     ui.listen("displayclick", elementClick);
     ui.listen("displaydrag", elementDrag);
+    ui.listen("displaydrop", elementDrop);
     windows = [];
     [
        new WPortrait()
+      ,new WFolder("fold", "Folder", 50, 50, 3, 2)
       //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
       //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
-    Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
+    //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
+    //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
   }
   
   private function elementFocus(event:{display:Display}):Window {
@@ -43,8 +52,17 @@ class SMain extends State {
   }
   
   private function elementClick(event:EDisplayClick):Bool {
-    var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
+    if (dname[0] == "desktop") {
+      if (focused != null) {
+        focused.focused = false;
+        updateWindow(focused);
+        focused = null;
+      }
+      desktop.click(dname.slice(1), event);
+      return true;
+    }
+    var window = elementFocus(event);
     switch dname {
       case [_, "title", "close"]:
       removeWindow(window);
@@ -64,8 +82,17 @@ class SMain extends State {
     if (event.rx == 0 && event.ry == 0) {
       return true;
     }
-    var window = elementFocus(event);
     var dname = event.display.fullName.split(".");
+    if (dname[0] == "desktop") {
+      if (focused != null) {
+        focused.focused = false;
+        updateWindow(focused);
+        focused = null;
+      }
+      desktop.drag(dname.slice(1), event);
+      return true;
+    }
+    var window = elementFocus(event);
     switch dname {
       case [_, "title"]:
       var ox = window.x;
@@ -82,6 +109,28 @@ class SMain extends State {
       
       case _ if (dname.length >= 4 && dname[2] == "clip"):
       window.elementDrag(dname.slice(3), event);
+    }
+    return true;
+  }
+  
+  private function elementDrop(event:EDisplayDrop):Bool {
+    if (dragFrom == null) {
+      return true;
+    }
+    var dname = event.display.fullName.split(".");
+    if (dname[0] == "desktop") {
+      if (focused != null) {
+        focused.focused = false;
+        updateWindow(focused);
+        focused = null;
+      }
+      dragFrom.acceptDrop(desktop.drop(dname.slice(1), event));
+      return true;
+    }
+    var window = elementFocus(event);
+    switch dname {
+      case _ if (dname.length >= 4 && dname[2] == "clip"):
+      dragFrom.acceptDrop(window.elementDrop(dname.slice(3), event));
     }
     return true;
   }
@@ -147,9 +196,11 @@ class SMain extends State {
   
   override public function to() {
     ui.reset();
+    ui.cursors = [Interface.cursor];
   }
   
   override public function tick() {
+    desktop.tick(ui.list[0]);
     for (w in windows) {
       w.tick();
     }
@@ -158,6 +209,12 @@ class SMain extends State {
   }
   
   override public function mouseMove(mx:Int, my:Int) {
+    if (FM.withinI(mx, 0, SCREEN_WIDTH - 1)
+        && FM.withinI(my, 0, SCREEN_HEIGHT - 1)) {
+      flash.ui.Mouse.hide();
+    } else {
+      flash.ui.Mouse.show();
+    }
     ui.mouseMove(mx, my);
   }
   
@@ -167,5 +224,8 @@ class SMain extends State {
   
   override public function mouseUp(mx:Int, my:Int) {
     ui.mouseUp(mx, my);
+    if (dragFrom != null) {
+      dragFrom.cancelDrag();
+    }
   }
 }

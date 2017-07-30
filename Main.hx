@@ -26,7 +26,6 @@ class Main extends Application {
         ,Assets([
              Embed.getBitmap("console_font", "png/font.png")
             ,Embed.getBitmap("interface", "png/interface.png")
-            ,Embed.getBitmap("icons", "png/icons.png")
             ,Embed.getBitmap("face", "png/face.png")
             ,Embed.getBitmap("assembly", "png/assembly.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
@@ -34,7 +33,7 @@ class Main extends Application {
                 pal = [ for (i in 0...32) itf.get(i * 8, 0) ];
                 return false;
               })
-            ,new AssetBind(["console_font", "pal", "icons", "face", "assembly"], (am, _) -> {
+            ,new AssetBind(["console_font", "pal", "face", "assembly"], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 font = [ for (p in pal)
                     Font.makeMonospaced(
@@ -45,7 +44,7 @@ class Main extends Application {
                         ,-3, -5
                       )
                   ];
-                Interface.init(am.getBitmap("interface"), am.getBitmap("icons"));
+                Interface.init(am.getBitmap("interface"));
                 WPortrait.init(am.getBitmap("face"));
                 WAssembly.init(am.getBitmap("assembly"));
                 return false;
