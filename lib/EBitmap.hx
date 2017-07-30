@@ -13,8 +13,9 @@ class EBitmap extends UIElement {
     this.bmp = bmp;
   }
   
-  override public function update(el:Display):Void {
-    (cast el:Panel).bmp = bmp;
+  override public function tick(display:Display):Void {
+    super.tick(display);
+    (cast display:Panel).bmp = bmp;
   }
   
   override public function toUI():DisplayType {

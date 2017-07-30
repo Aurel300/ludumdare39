@@ -26,7 +26,6 @@ class Window {
   public var contentH:Int;
   public var show:Bool;
   
-  public var wm:SMain;
   public var displayCh:Array<Display>;
   public var display:Display;
   
@@ -77,7 +76,7 @@ class Window {
   }
   
   public function removeSelf():Void {
-    wm.removeWindow(this);
+    Main.wm.removeWindow(this);
   }
   
   private function remap():Void {

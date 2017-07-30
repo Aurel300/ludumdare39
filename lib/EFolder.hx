@@ -11,7 +11,6 @@ class EFolder extends UIElement {
   public var icons:Array<Icon>;
   public var selected:Int;
   public var doUpdate:Bool;
-  public var wm:SMain;
   public var draggedFrom:Int;
   public var draggedTo:Int;
   public var draggedIcon:Icon;
@@ -66,29 +65,20 @@ class EFolder extends UIElement {
     if (index == -1 || icons[index] == NONE) {
       return;
     }
-    if (wm.ui.cursors.length == 1) {
+    if (Main.wm.ui.cursors.length == 1) {
       draggedFrom = index;
       draggedIcon = icons[index];
-      wm.ui.cursors.unshift(new Cursor(Interface.icons[icons[index]], -event.offX, -event.offY));
-      wm.dragFrom = this;
+      Main.wm.ui.cursors.unshift(new Cursor(Interface.icons[icons[index]], -event.offX, -event.offY));
+      Main.wm.dragFrom = this;
       icons[index] = NONE;
     }
     selected = index;
     doUpdate = true;
   }
   
-  override public function update(display:Display):Void {
-    display.w = iw * 20;
-    display.h = ih * 20;
-    for (i in 0...icons.length) {
-      (cast display.children[i]:Panel).bmp
-        = (i == selected ? Interface.iconsSel : Interface.icons)[icons[i]];
-    }
-  }
-  
   public function acceptDrop(onto:EFolder):Void {
-    wm.ui.cursors.shift();
-    wm.dragFrom = null;
+    Main.wm.ui.cursors.shift();
+    Main.wm.dragFrom = null;
     doUpdate = true;
     selected = -1;
     if (onto == null) {
@@ -120,7 +110,12 @@ class EFolder extends UIElement {
   override public function tick(display:Display):Void {
     super.tick(display);
     if (doUpdate) {
-      update(display);
+      display.w = iw * 20;
+      display.h = ih * 20;
+      for (i in 0...icons.length) {
+        (cast display.children[i]:Panel).bmp
+          = (i == selected ? Interface.iconsSel : Interface.icons)[icons[i]];
+      }
       doUpdate = false;
     }
   }

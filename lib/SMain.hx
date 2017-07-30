@@ -5,52 +5,39 @@ import sk.thenet.app.*;
 import sk.thenet.ui.*;
 
 class SMain extends State {
-  static inline var SCREEN_WIDTH:Int = 400;
-  static inline var SCREEN_HEIGHT:Int = 300;
+  public static inline var SCREEN_WIDTH:Int = 400;
+  public static inline var SCREEN_HEIGHT:Int = 300;
   
   public var ui:UI;
   public var windows:Array<Window>;
   public var focused:Window;
-  public var desktop:EFolder;
+  public var desktop:EDesktop;
+  public var bubble:EBubble;
+  public var bubbleDisplay:Display;
   public var dragFrom:EFolder;
   
   public function new(app:Main) {
     super("main", app);
-    desktop = new EFolder("desktop", 5, 5, 1, 2, [Icon.FACE]);
-    desktop.dragFunc = (_, _) -> { return true; };
-    desktop.doubleFunc = (folder) -> {
-      switch (folder.icons[folder.selected]) {
-        case FACE:
-        var win = getWindow("portrait");
-        win.show = true;
-        focusWindow(win);
-        
-        case _:
-      }
-      return true;
-    };
-    desktop.wm = this;
-    ui = new UI(DisplayBuilder.build([
-        desktop.toUI()
-      ]));
+    desktop = new EDesktop();
+    bubble = new EBubble();
+    ui = new UI([]);
     ui.doubleClick = 13;
     ui.listen("displayclick", elementClick);
     ui.listen("displaydrag", elementDrag);
     ui.listen("displaydrop", elementDrop);
-    windows = [];
-    [
-       new WPortrait()
-      /*,new WText("test", "Info", 100, 50,
-"$M\"\"Welcome
-$A_____________________________
-Welcome to Battery City!")*/
-      //,new WFolder("fold", "Folder", 50, 50, 3, 2)
-      //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
-      //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
-    ].map(updateWindow);
-    //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
-    //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
-    Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
+  }
+  
+  public function say(player:Bool, text:String, origin:String):Void {
+    ui.list.remove(bubbleDisplay);
+    if (player) {
+      var win = getWindow("portrait");
+      win.show = true;
+      focusWindow(win);
+      bubble.setXY(win.x, win.y);
+      WPortrait.talking = true;
+    }
+    bubble.say(player, text, origin);
+    ui.list.push(bubbleDisplay);
   }
   
   public function focusWindow(win:Window):Void {
@@ -92,6 +79,9 @@ Welcome to Battery City!")*/
       }
       desktop.click(dname.slice(1), event);
       return true;
+    } else if (dname[0] == "bubble") {
+      bubble.click(dname.slice(1), event);
+      return true;
     }
     var window = elementFocus(event);
     switch dname {
@@ -125,6 +115,8 @@ Welcome to Battery City!")*/
       }
       desktop.drag(dname.slice(1), event);
       return true;
+    } else if (dname[0] == "bubble") {
+      return true;
     }
     var window = elementFocus(event);
     switch dname {
@@ -146,7 +138,7 @@ Welcome to Battery City!")*/
     return true;
   }
   
-  private function elementDrop(event:EDisplayDrop):Bool {
+  public function elementDrop(event:EDisplayDrop):Bool {
     if (dragFrom == null) {
       return true;
     }
@@ -168,7 +160,7 @@ Welcome to Battery City!")*/
     return true;
   }
   
-  private function getWindow(id:String):Window {
+  public function getWindow(id:String):Window {
     for (w in windows) {
       if (w.id == id) {
         return w;
@@ -177,7 +169,7 @@ Welcome to Battery City!")*/
     return null;
   }
   
-  private function scrollWindow(win:Window, sx:Int, sy:Int):Void {
+  public function scrollWindow(win:Window, sx:Int, sy:Int):Void {
     var panel = ui.get(win.id + ".frame.clip").children[0];
     var scrollableX = win.contentW - (win.w - 10);
     var scrollableY = win.contentH - (win.h - 10);
@@ -191,7 +183,6 @@ Welcome to Battery City!")*/
   }
   
   public function updateWindow(win:Window):Void {
-    win.wm = this;
     ui.list.push(if (ui.get(win.id) != null) {
         var rem = ui.get(win.id);
         ui.list.remove(rem);
@@ -230,10 +221,32 @@ Welcome to Battery City!")*/
   override public function to() {
     ui.reset();
     ui.cursors = [Interface.cursor];
+    ui.list = DisplayBuilder.build([
+         desktop.toUI()
+        ,bubble.toUI()
+      ]);
+    bubbleDisplay = ui.list[1];
+    windows = [];
+    [
+       new WPortrait()
+      ,new WHelp()
+      //,new WTest(50, 50)
+      /*,new WText("test", "Info", 100, 50,
+"$M\"\"Welcome
+$A_____________________________
+Welcome to Battery City!")*/
+      //,new WFolder("fold", "Folder", 50, 50, 3, 2)
+      //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
+      //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
+    ].map(updateWindow);
+    //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
+    //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
+    //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
   }
   
   override public function tick() {
     desktop.tick(ui.list[0]);
+    bubble.tick(bubbleDisplay);
     for (w in windows) {
       w.tick();
     }

@@ -15,8 +15,6 @@ class UIElement {
     this.y = y;
   }
   
-  public function update(el:Display):Void {}
-  
   public function toUI():DisplayType {
     return null;
   }

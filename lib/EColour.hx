@@ -19,17 +19,12 @@ class EColour extends UIElement {
     bmp = Platform.createBitmap(w, h, colour);
   }
   
-  override public function update(el:Display):Void {
+  override public function tick(display:Display):Void {
+    super.tick(display);
     if (colour != lcolour) {
       bmp.fill(colour);
       lcolour = colour;
     }
-  }
-  
-  override public function tick(display:Display):Void {
-    super.tick(display);
-    update(display);
-    (cast display:Panel).bmp = bmp;
   }
   
   override public function toUI():DisplayType {

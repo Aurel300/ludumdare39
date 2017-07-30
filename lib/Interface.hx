@@ -20,6 +20,10 @@ class Interface {
   public static var iconsSmall:Vector<Bitmap>;
   
   static var cursors:Vector<Bitmap>;
+  public static var bubble:Bitmap;
+  public static var bubbleCut1:Point2DI;
+  public static var bubbleCut2:Point2DI;
+  public static var bubblePoint:Vector<Bitmap>;
   static var frame:Bitmap;
   static var frameCut1:Point2DI;
   static var frameCut2:Point2DI;
@@ -31,9 +35,13 @@ class Interface {
   
   public static function init(itf:Bitmap):Void {
     var bf = itf.fluent;
-    frame = bf >> new Cut(24, 8, 24, 24);
     cursors = Vector.fromArrayCopy([ for (i in 0...2) bf >> new Cut(48 + i * 16, 24, 16, 16) ]);
     cursor = new Cursor(cursors[0], -1, -2);
+    bubble = bf >> new Cut(48, 8, 16, 16);
+    bubbleCut1 = new Point2DI(5, 5);
+    bubbleCut2 = new Point2DI(11, 11);
+    bubblePoint = Vector.fromArrayCopy([ for (i in 0...2) bf >> new Cut(64, 8 + i * 8, 8, 8) ]);
+    frame = bf >> new Cut(24, 8, 24, 24);
     frameCut1 = new Point2DI(5, 5);
     frameCut2 = new Point2DI(19, 19);
     buttonCut1 = new Point2DI(1, 1);
@@ -54,13 +62,13 @@ class Interface {
       icopos += 10;
     }
     barBG = bf >> new Cut(20, 32, 10, 10);
-    icons = new Vector<Bitmap>(14);
-    iconsSel = new Vector<Bitmap>(14);
-    iconsSmall = new Vector<Bitmap>(14);
+    icons = new Vector<Bitmap>(Icon.ICON_COUNT);
+    iconsSel = new Vector<Bitmap>(Icon.ICON_COUNT);
+    iconsSmall = new Vector<Bitmap>(Icon.ICON_COUNT);
     icons[0] = Platform.createBitmap(16, 16, 0);
     iconsSel[0] = Platform.createBitmap(16, 16, Main.pal[7]);
     iconsSmall[0] = Platform.createBitmap(16, 16, 0);
-    for (i in 1...icons.length) {
+    for (i in 1...Icon.ICON_COUNT) {
       icons[i] = bf >> new Cut(88 + ((i - 1) % 4) * 16, ((i - 1) >> 2) * 16, 16, 16);
       iconsSel[i] = Platform.createBitmap(16, 16, Main.pal[7]).fluent
         << new Blit(bf >> new Cut(88 + ((i - 1) % 4) * 16, ((i - 1) >> 2) * 16, 16, 16));

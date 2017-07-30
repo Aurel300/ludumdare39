@@ -16,4 +16,11 @@ abstract Icon(Int) from Int to Int {
   var DOCUMENT = 11;
   var BATTERY = 12;
   var BAG = 13;
+  var MAP = 14;
+  var BOOK = 15;
+  var DOOR_CLOSED = 16;
+  var TRAPDOOR_CLOSED = 17;
+  var PUZZLE = 18;
+  var PUZZLE_SOLVED = 19;
+  var ICON_COUNT = 20;
 }

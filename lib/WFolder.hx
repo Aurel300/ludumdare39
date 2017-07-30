@@ -23,7 +23,6 @@ class WFolder extends Window {
   
   override public function update():Void {
     super.update();
-    folder.wm = wm;
     if (!focused) {
       folder.selected = -1;
       folder.doUpdate = true;

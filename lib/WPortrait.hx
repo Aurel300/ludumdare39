@@ -17,6 +17,10 @@ class WPortrait extends Window {
   static var EYES:Vector<Bitmap>;
   static var NOSE:Vector<Bitmap>;
   static var HAIR:Vector<Bitmap>;
+  static var MOUTH:Vector<Bitmap>;
+  
+  public static var talking:Bool = false;
+  static var lastTalk:Int = 0;
   
   public static function init(face:Bitmap):Void {
     var ff = face.fluent;
@@ -32,6 +36,9 @@ class WPortrait extends Window {
       } ]);
     HAIR = Vector.fromArrayCopy([ for (i in 0...4) {
         ff >> new Cut(i * 32, 32, 32, 16);
+      } ]);
+    MOUTH = Vector.fromArrayCopy([ for (i in 0...8) {
+        ff >> new Cut(i * 16, 48, 16, 16);
       } ]);
   }
   
@@ -84,6 +91,12 @@ class WPortrait extends Window {
     dragY >>= 1;
     bg.blitAlpha(EYES[Save.faceEyes], HMARGIN - dragX, HMARGIN + 7 + phEyes.get(true) - dragY);
     bg.blitAlpha(NOSE[Save.faceNose], HMARGIN + 8 - dragX, HMARGIN + 11 + phNose.get(true) - dragY);
+    if (talking) {
+      if (FM.prng.nextFloat() > .8) {
+        lastTalk = FM.prng.nextMod(8);
+      }
+      bg.blitAlpha(MOUTH[lastTalk], HMARGIN + 8 - dragX, HMARGIN + 19 + phHair.get(true) - dragY);
+    }
   }
   
   override public function drag(rx:Int, ry:Int):Void {

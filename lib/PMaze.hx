@@ -121,7 +121,7 @@ access your items.
         var roomId = getRoomId(title);
         placePlayer(roomId, state[statePlayer].title);
         windows[roomId].show = true;
-        windows[roomId].wm.focusWindow(windows[roomId]);
+        Main.wm.focusWindow(windows[roomId]);
         
         case Goal:
         solve();
@@ -149,7 +149,7 @@ access your items.
         inv.folder.icons[0] = KEY;
         inv.folder.doUpdate = true;
         inv.show = true;
-        inv.wm.focusWindow(inv);
+        Main.wm.focusWindow(inv);
         return false;
         
         case LOCK:
@@ -185,7 +185,7 @@ access your items.
     switch (folder.icons[folder.selected]) {
       case YOU:
       inv.show = true;
-      inv.wm.focusWindow(inv);
+      Main.wm.focusWindow(inv);
       
       case _:
     }
@@ -196,9 +196,8 @@ access your items.
     statePlayer = i;
     if (state[i].instruct != null) {
       info.el.text = state[i].instruct;
-      info.el.updateText();
       if (from != "") {
-        info.wm.focusWindow(info);
+        Main.wm.focusWindow(info);
       }
       info.show = true;
     }

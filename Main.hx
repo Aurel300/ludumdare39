@@ -17,6 +17,7 @@ class Main extends Application {
   public static var font:Array<Font>;
   public static var puzzles:Array<Puzzle>;
   public static var puzzlesMap:Map<String, Puzzle>;
+  public static var wm:SMain;
   
   public static function main() Platform.boot(() -> new Main());
   
@@ -29,12 +30,16 @@ class Main extends Application {
             ,Embed.getBitmap("interface", "png/interface.png")
             ,Embed.getBitmap("face", "png/face.png")
             ,Embed.getBitmap("assembly", "png/assembly.png")
+            ,Embed.getBitmap("story1", "png/story1.png")
+            ,Embed.getBitmap("story2", "png/story2.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
                 pal = [ for (i in 0...11) itf.get(i * 8, 0) ];
                 return false;
               })
-            ,new AssetBind(["console_font", "pal", "face", "assembly"], (am, _) -> {
+            ,new AssetBind([
+              "console_font", "pal", "face", "assembly", "story1"
+            ], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 var itf = am.getBitmap("interface").fluent;
                 font = [ for (p in pal)
@@ -105,7 +110,7 @@ class Main extends Application {
       puzzlesMap.set(p.id, p);
     }
     preloader = new TNPreloader(this, "main", true);
-    addState(new SMain(this));
+    addState(wm = new SMain(this));
     mainLoop();
   }
 }
