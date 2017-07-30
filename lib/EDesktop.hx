@@ -15,9 +15,9 @@ class EDesktop extends EFolder {
       if (win != null) {
         win.show = true;
         Main.wm.focusWindow(win);
-        Main.wm.say(true, "blah\nsecond\nthird gee", "blah");
       }
       return true;
     };
+    show = false;
   }
 }

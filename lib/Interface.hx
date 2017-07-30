@@ -24,11 +24,12 @@ class Interface {
   public static var bubbleCut1:Point2DI;
   public static var bubbleCut2:Point2DI;
   public static var bubblePoint:Vector<Bitmap>;
+  public static var textBG:Bitmap;
   static var frame:Bitmap;
   static var frameCut1:Point2DI;
   static var frameCut2:Point2DI;
-  static var buttonCut1:Point2DI;
-  static var buttonCut2:Point2DI;
+  public static var buttonCut1:Point2DI;
+  public static var buttonCut2:Point2DI;
   static var buttons:Map<String, Vector<Bitmap>>;
   static var buttonIcons:Map<String, Bitmap>;
   static var barBG:Bitmap;
@@ -62,6 +63,7 @@ class Interface {
       icopos += 10;
     }
     barBG = bf >> new Cut(20, 32, 10, 10);
+    textBG = bf >> new Cut(30, 32, 10, 10);
     icons = new Vector<Bitmap>(Icon.ICON_COUNT);
     iconsSel = new Vector<Bitmap>(Icon.ICON_COUNT);
     iconsSmall = new Vector<Bitmap>(Icon.ICON_COUNT);

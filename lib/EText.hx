@@ -18,14 +18,17 @@ class EText extends UIElement {
     }
     text = ntext;
     bmp.fill(0);
-    textHeight = Main.font[1].render(bmp, 0, 0, text, Main.font).y;
-    if (textHeight > bmp.height) {
-      bmp = Platform.createBitmap(w, textHeight, 0);
-      textHeight = Main.font[1].render(bmp, 0, 0, text, Main.font).y;
+    var size = Main.font[1].render(bmp, 0, 0, text, Main.font);
+    if (size.y > bmp.height) {
+      bmp = Platform.createBitmap(w, size.y, 0);
+      size = Main.font[1].render(bmp, 0, 0, text, Main.font);
     }
+    textWidth = size.x;
+    textHeight = size.y;
     return text;
   }
   
+  public var textWidth:Int;
   public var textHeight:Int;
   
   private var bmp:Bitmap;

@@ -2,6 +2,7 @@ package lib;
 
 import sk.thenet.FM;
 import sk.thenet.app.*;
+import sk.thenet.app.Keyboard.Key;
 import sk.thenet.ui.*;
 
 class SMain extends State {
@@ -11,6 +12,7 @@ class SMain extends State {
   public var ui:UI;
   public var windows:Array<Window>;
   public var focused:Window;
+  public var login:WLogin;
   public var desktop:EDesktop;
   public var bubble:EBubble;
   public var bubbleDisplay:Display;
@@ -27,7 +29,7 @@ class SMain extends State {
     ui.listen("displaydrop", elementDrop);
   }
   
-  public function say(player:Bool, text:String, origin:String):Void {
+  public function say(player:Bool, text:String, ?origin:String):Void {
     ui.list.remove(bubbleDisplay);
     if (player) {
       var win = getWindow("portrait");
@@ -36,7 +38,7 @@ class SMain extends State {
       bubble.setXY(win.x, win.y);
       WPortrait.talking = true;
     }
-    bubble.say(player, text, origin);
+    bubble.say(player, text, player ? Save.username : origin);
     ui.list.push(bubbleDisplay);
   }
   
@@ -71,7 +73,11 @@ class SMain extends State {
   
   private function elementClick(event:EDisplayClick):Bool {
     var dname = event.display.fullName.split(".");
-    if (dname[0] == "desktop") {
+    if (dname.length < 1) {
+      return true;
+    }
+    switch (dname[0]) {
+      case "desktop":
       if (focused != null) {
         focused.focused = false;
         updateWindow(focused);
@@ -79,7 +85,8 @@ class SMain extends State {
       }
       desktop.click(dname.slice(1), event);
       return true;
-    } else if (dname[0] == "bubble") {
+      
+      case "bubble":
       bubble.click(dname.slice(1), event);
       return true;
     }
@@ -107,7 +114,11 @@ class SMain extends State {
       return true;
     }
     var dname = event.display.fullName.split(".");
-    if (dname[0] == "desktop") {
+    if (dname.length < 1) {
+      return true;
+    }
+    switch (dname[0]) {
+      case "desktop":
       if (focused != null) {
         focused.focused = false;
         updateWindow(focused);
@@ -115,12 +126,16 @@ class SMain extends State {
       }
       desktop.drag(dname.slice(1), event);
       return true;
-    } else if (dname[0] == "bubble") {
+      
+      case "bubble":
       return true;
     }
     var window = elementFocus(event);
     switch dname {
       case [_, "title"]:
+      if (!window.movable) {
+        return true;
+      }
       var ox = window.x;
       var oy = window.y;
       window.x += event.rx;
@@ -228,7 +243,8 @@ class SMain extends State {
     bubbleDisplay = ui.list[1];
     windows = [];
     [
-       new WPortrait()
+       login = new WLogin()
+      ,new WPortrait()
       ,new WHelp()
       //,new WTest(50, 50)
       /*,new WText("test", "Info", 100, 50,
@@ -239,6 +255,12 @@ Welcome to Battery City!")*/
       //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
       //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
+    for (w in windows) {
+      if (w != login) {
+        w.show = false;
+      }
+    }
+    focusWindow(login);
     //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
     //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
     //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
@@ -272,6 +294,12 @@ Welcome to Battery City!")*/
     ui.mouseUp(mx, my);
     if (dragFrom != null) {
       dragFrom.acceptDrop(null);
+    }
+  }
+  
+  override public function keyUp(key:Key) {
+    if (login.show) {
+      login.keyPress(key);
     }
   }
 }

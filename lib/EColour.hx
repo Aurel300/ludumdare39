@@ -21,6 +21,8 @@ class EColour extends UIElement {
   
   override public function tick(display:Display):Void {
     super.tick(display);
+    display.x = x;
+    display.y = y;
     if (colour != lcolour) {
       bmp.fill(colour);
       lcolour = colour;

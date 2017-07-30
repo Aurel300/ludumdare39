@@ -57,6 +57,7 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
    - [x] scrolling
    - [x] elements
    - [ ] modals
+   - [x] speech bubbles
    - [x] drag 'n drop icons
      - [ ] desktop
      - [ ] overworld
