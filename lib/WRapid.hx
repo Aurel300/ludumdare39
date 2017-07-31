@@ -17,8 +17,10 @@ class WRapid extends Window {
     w = contentW = 150;
     h = contentH = 22;
     id = "rapid";
+    help = "rapid";
     title = '${puzzle.id}.pzl';
     icon = Icon.KEY;
+    close = puzzle.stop;
     var prog = new EProgress("progress", 1, 1, 148, 20);
     contents.push(prog);
     prog.pos = 1;
@@ -39,11 +41,6 @@ class WRapid extends Window {
     var final = new EButtonText("unlock", 1, 1, 148, 20, "Fix!");
     final.show = false;
     contents.push(final);
-    if (puzzle.instruct != null) {
-      var text = new EText("instr", 0, ypos, 150, 150, puzzle.instruct);
-      contents.push(text);
-      h += text.textHeight;
-    }
     remap();
     redisable();
     check();
@@ -88,7 +85,6 @@ class WRapid extends Window {
       check();
       
       case "unlock":
-      removeSelf();
       puzzle.solve();
     }
   }

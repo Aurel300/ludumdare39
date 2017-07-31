@@ -28,5 +28,8 @@ abstract Icon(Int) from Int to Int {
   var SHARON = 23;
   var BOSS = 24;
   var PLANT = 25;
-  var ICON_COUNT = 26;
+  var SHADOW = 26;
+  var INVISIBLE = 27;
+  var DESK = 28;
+  var ICON_COUNT = 29;
 }

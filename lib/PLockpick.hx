@@ -7,10 +7,18 @@ class PLockpick extends Puzzle {
   public var pins     :Array<Int>;
   public var tolerance:Int;
   public var fallSpeed:Int;
-  public var instruct :String;
+  public var window   :WLockpick;
   
   public function new(num:Int) {
     super('lockpk$num');
+    sequel = (num < 4 ? 'lockpk${num + 1}' : null);
+    points = (switch (num) {
+        case 0: 5;
+        case 1: 10;
+        case 2: 15;
+        case 3: 20;
+        case _: 20;
+      });
     var prng = new Generator(new XORShift(0x70C83D01));
     direct = num < 2;
     for (i in 0...num * 2) prng.next();
@@ -18,28 +26,19 @@ class PLockpick extends Puzzle {
     tolerance = 8 - num * 1;
     fallSpeed = (num == 4 ? 1 : 0);
     if (num == 4) tolerance += 2;
-    instruct = (switch (num) {
-        case 0: 
-"Set the pins (sliders) to the
-correct positions. The lock
-will unlock when all sliders
-are green.";
-        case 2:
-"This time you have to move
-the pins with your lockpick.
-Move the horizontal slider to
-access the correct pin, then
-press the button to push it up.
-Press reset if you push a pin
-too far.";
-        case 4:
-"Be quick, the pins now fall
-down over time!";
-        case _: null;
-      });
   }
   
   override public function spawn():Array<Window> {
-    return [new WLockpick(this)];
+    return [window = new WLockpick(this)];
+  }
+  
+  override public function start():Void {
+    super.start();
+    Main.wm.showWindow(window);
+  }
+  
+  override public function stop():Void {
+    super.stop();
+    window.show = false;
   }
 }

@@ -47,8 +47,8 @@ class WLift extends Window {
              "Foyer"
             ,"Dispatching"
             ,"Your office"
-            ,"Your office"
-            ,"Your office"
+            ,"Recreation room"
+            ,"BOSS ROOM"
           ][Story.LIFT_FLOOR]);
       }
     }
@@ -60,8 +60,13 @@ class WLift extends Window {
     }
     switch (dname[0]) {
       case _.substr(0, 5) => "floor":
-      Story.LIFT_FLOOR = Std.parseInt(dname[0].substr(5));
-      posTarget = floorPos(Story.LIFT_FLOOR);
+      var floor = Std.parseInt(dname[0].substr(5));
+      if (Story.POINTS >= Story.FLOOR_POINTS[floor]) {
+        Story.LIFT_FLOOR = floor;
+        posTarget = floorPos(floor);
+      } else {
+        Main.wm.say(false, 'To access floor ${floor + 1}, you need to restore ${Story.FLOOR_POINTS[floor]} power units.');
+      }
     }
   }
 }

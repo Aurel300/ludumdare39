@@ -46,16 +46,18 @@ class WPortrait extends Window {
   var phEyes:Phaser;
   var phNose:Phaser;
   var phHair:Phaser;
+  var lastX:Int;
+  var lastY:Int;
   var dragX:Int;
   var dragY:Int;
   
   public function new() {
     super();
-    x = 320;
-    y = 150;
+    x = lastX = 320;
+    y = lastY = 150;
     w = h = contentW = contentH = SIZE + MARGIN;
-    id = "portrait";
-    title = "Face";
+    id = help = "portrait";
+    title = "";
     icon = Icon.FACE;
     dragX = dragY = 0;
     phEyes = Phaser.linear(64, 32);
@@ -99,13 +101,12 @@ class WPortrait extends Window {
     }
   }
   
-  override public function drag(rx:Int, ry:Int):Void {
-    dragX += (rx >> 1);
-    dragY += (ry >> 1);
-  }
-  
   override public function tick():Void {
     super.tick();
+    dragX += (x - lastX) >> 1;
+    dragY += (y - lastY) >> 1;
+    lastX = x;
+    lastY = y;
     createBG();
   }
 }

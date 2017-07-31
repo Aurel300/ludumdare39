@@ -34,13 +34,19 @@ class Main extends Application {
             ,Embed.getBitmap("story2", "png/story2.png")
             ,Embed.getBitmap("story3", "png/story3.png")
             ,Embed.getBitmap("story4", "png/story4.png")
+            ,Embed.getBitmap("story5", "png/story5.png")
+            ,Embed.getBitmap("story6", "png/story6.png")
+            ,Embed.getBitmap("story7", "png/story7.png")
+            ,Embed.getBitmap("story8", "png/story8.png")
+            ,Embed.getBitmap("story9", "png/story9.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
                 pal = [ for (i in 0...11) itf.get(i * 8, 0) ];
                 return false;
               })
             ,new AssetBind([
-              "console_font", "pal", "face", "assembly", "story1", "story2", "story3", "story4"
+               "console_font", "pal", "face", "assembly"
+              ,"story1", "story2", "story3", "story4", "story5", "story6", "story7", "story8", "story9"
             ], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 var itf = am.getBitmap("interface").fluent;
@@ -54,7 +60,7 @@ class Main extends Application {
                       )
                   ];
                 var bits = Vector.fromArrayCopy([ for (i in 0...16)
-                    itf >> new Cut(64 + (i % 4) * 4, 40 + (i >> 2) * 4, 4, 4)
+                    itf >> new Cut(72 + (i % 4) * 4, 8 + (i >> 2) * 4, 4, 4)
                   ]);
                 for (italic in [false, true]) {
                   var bbig = Platform.createBitmap(raw.width * (italic ? 6 : 4), raw.height * 4, 0);
@@ -93,6 +99,7 @@ class Main extends Application {
         ,Keyboard
         ,Mouse
       ]);
+    WHelp.init();
     puzzles = [
          new PLockpick(0)
         ,new PLockpick(1)
@@ -111,10 +118,10 @@ class Main extends Application {
     }
     Save.init();
     Story.init();
-    PMaze.init();
     am = assetManager;
     preloader = new TNPreloader(this, "main", true);
     addState(wm = new SMain(this));
+    addState(new SEnd(this));
     mainLoop();
   }
 }

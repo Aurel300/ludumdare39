@@ -54,7 +54,7 @@ class Interface {
          "bg" => Vector.fromArrayCopy([bg, bgDown])
       ];
     var icopos = 0;
-    for (key in ["close", "minimise", "left", "right", "down", "up"]) {
+    for (key in ["close", "minimise", "left", "right", "down", "up", "help"]) {
       buttonIcons[key] = bf >> new Cut(icopos, 42, 10, 10);
       buttons[key] = Vector.fromArrayCopy([
            bg >> new Copy() << new Blit(buttonIcons[key])
@@ -151,9 +151,12 @@ class Interface {
   }
   
   public static function windowTitle(
-    icon:Icon, title:String, focused:Bool, minimisable:Bool, closable:Bool, w:Int
+    icon:Icon, title:String, focused:Bool, minimisable:Bool, closable:Bool, helpable:Bool, w:Int
   ):DisplayType {
-    var text = Platform.createBitmap(FM.maxI(w - 5 - (closable ? 10 : 0) - (minimisable ? 10 : 0), 1), 10, 0);
+    var text = Platform.createBitmap(
+         FM.maxI(w - 5, 1)
+        ,10, 0
+      );
     Main.font[5].render(text, 0, 0, title);
     return SolidPanel(Main.pal[focused ? 7 : 6], w + 4, 10, [
          WithName("title")
@@ -164,17 +167,22 @@ class Interface {
         ,Panel(text, [
             WithXY(9, 0)
           ])
-      ].concat(closable ? [
-        Button(buttons["close"][0], buttons["close"][0], buttons["close"][1], [
+        ,Button(buttons["close"][0], buttons["close"][0], buttons["close"][1], [
              WithName("close")
             ,WithXY(w - 6, 0)
+            ,WithShow(closable)
           ])
-      ] : []).concat(minimisable ? [
-        Button(buttons["minimise"][0], buttons["minimise"][0], buttons["minimise"][1], [
+        ,Button(buttons["minimise"][0], buttons["minimise"][0], buttons["minimise"][1], [
              WithName("minimise")
             ,WithXY(w - 6 - (closable ? 10 : 0), 0)
+            ,WithShow(minimisable)
           ])
-      ] : []));
+        ,Button(buttons["help"][0], buttons["help"][0], buttons["help"][1], [
+             WithName("help")
+            ,WithXY(w - 6 - (closable ? 10 : 0) - (minimisable ? 10 : 0), 0)
+            ,WithShow(helpable)
+          ])
+      ]);
   }
   
   public static function updateWindowFrame(

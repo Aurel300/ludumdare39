@@ -25,6 +25,7 @@ class Window {
   public var contentW:Int;
   public var contentH:Int;
   public var show:Bool;
+  public var help:String;
   
   public var displayCh:Array<Display>;
   public var display:Display;
@@ -55,7 +56,8 @@ class Window {
     hMin = 30;
     wMax = 30;
     hMax = 30;
-    show = true;
+    show = false;
+    help = null;
     contents = [];
   }
   
@@ -75,10 +77,6 @@ class Window {
     }
   }
   
-  public function removeSelf():Void {
-    Main.wm.removeWindow(this);
-  }
-  
   private function remap():Void {
     contentsMap = new Map<String, UIElement>();
     for (c in contents) {
@@ -94,7 +92,7 @@ class Window {
              WithName(id)
             ,WithXY(x, y)
             ,Interface.windowFrame(w, h, contentW, contentH, [ for (c in contents) c.toUI() ])
-            ,Interface.windowTitle(icon, title, focused, minimisable, closable, w)
+            ,Interface.windowTitle(icon, title, focused, minimisable, closable, help != null, w)
           ])
       ])[0];
     display.children[0].children[0].children[0].sort = false;
@@ -103,14 +101,12 @@ class Window {
   }
   
   public dynamic function close():Void {
-    removeSelf();
+    show = false;
   }
   
   public dynamic function minimise():Void {
     minimised = !minimised;
   }
-  
-  public function drag(rx:Int, ry:Int):Void {}
   
   public function elementClick(dname:Array<String>, event:EDisplayClick):Void {
     for (c in contents) {

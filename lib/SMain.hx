@@ -10,20 +10,29 @@ class SMain extends State {
   public static inline var SCREEN_HEIGHT:Int = 300;
   
   public var ui:UI;
+  
   public var windows:Array<Window>;
   public var focused:Window;
+  public var help:WHelp;
   public var lift:WLift;
   public var login:WLogin;
   public var story:WStory;
+  
   public var desktop:EDesktop;
   public var bubble:EBubble;
   public var bubbleDisplay:Display;
+  
   public var dragFrom:EFolder;
+  public var overworld:PMaze;
+  
+  public var first:Bool = true;
   
   public function new(app:Main) {
     super("main", app);
     desktop = new EDesktop();
     bubble = new EBubble();
+    overworld = (cast Main.puzzlesMap.get("maze0"):PMaze);
+    overworld.locked = false;
     ui = new UI([]);
     ui.doubleClick = 13;
     ui.listen("displayclick", elementClick);
@@ -31,8 +40,39 @@ class SMain extends State {
     ui.listen("displaydrop", elementDrop);
   }
   
-  public function startPuzzle(puzzle:String):Void {
-    Main.puzzlesMap.get(puzzle).spawn().map(updateWindow);
+  public function showHelp(id:String):Void {
+    help.showHelp(id);
+    showWindow(help);
+  }
+  
+  public function startPuzzle(id:String):Void {
+    var puzzle = Main.puzzlesMap.get(id);
+    if (puzzle.locked) {
+      say(false, "That puzzle is locked!");
+      return;
+    }
+    if (puzzle.solved) {
+      say(false, "You have already solved that puzzle!");
+      return;
+    }
+    if (Puzzle.solving >= 2) {
+      say(false, "You are already solving a puzzle!");
+      return;
+    }
+    puzzle.start();
+  }
+  
+  public function unlockPuzzle(puzzle:String):Void {
+    Main.puzzlesMap.get(puzzle).locked = false;
+    overworld.updatePuzzle(puzzle);
+  }
+  
+  public function solvePuzzle(puzzle:String):Void {
+    if (Save.solved.indexOf(id) == -1) {
+      Save.solved.push(puzzle);
+      Main.puzzlesMap.get(puzzle).solved = true;
+      overworld.updatePuzzle(puzzle);
+    }
   }
   
   public function say(player:Bool, text:String, ?origin:String):Void {
@@ -47,6 +87,13 @@ class SMain extends State {
       bubble.setXY(0, 50);
     }
     bubble.say(player, text, player ? Save.username : origin);
+    ui.list.push(bubbleDisplay);
+  }
+  
+  public function clickThrough():Void {
+    ui.list.remove(bubbleDisplay);
+    bubble.setXY(0, 310);
+    bubble.say(false, "$D(click anywhere to continue)", null);
     ui.list.push(bubbleDisplay);
   }
   
@@ -114,6 +161,7 @@ class SMain extends State {
       window.minimise();
       clampWindow(window);
       ui.update();
+      case [_, "title", "help"]: showHelp(window.help);
       
       case [_, "frame", "scrollLeft"]: scrollWindow(window, -5, 0);
       case [_, "frame", "scrollRight"]: scrollWindow(window, 5, 0);
@@ -153,12 +201,9 @@ class SMain extends State {
       if (!window.movable) {
         return true;
       }
-      var ox = window.x;
-      var oy = window.y;
       window.x += event.rx;
       window.y += event.ry;
       clampWindow(window);
-      window.drag(window.x - ox, window.y - oy);
       updateWindow(window);
       
       case [_, "frame", "scrollBarX"]: scrollWindow(window, event.rx, 0);
@@ -193,6 +238,9 @@ class SMain extends State {
   }
   
   public function getWindow(id:String):Window {
+    if (id == "map") {
+      return overworld.playerWindow;
+    }
     for (w in windows) {
       if (w.id == id) {
         return w;
@@ -232,18 +280,6 @@ class SMain extends State {
     ui.update();
   }
   
-  public function removeWindow(win:Window):Void {
-    if (win == focused) {
-      focused = null;
-    }
-    if (ui.get(win.id) != null) {
-      ui.list.remove(ui.get(win.id));
-      windows.remove(win);
-    }
-    reorder();
-    ui.update(); 
-  }
-  
   private function reorder():Void {
     for (z in 0...windows.length) {
       windows[z].z = z;
@@ -251,6 +287,11 @@ class SMain extends State {
   }
   
   override public function to() {
+    if (!first) {
+      overworld.enter("The lift");
+      return;
+    }
+    first = false;
     ui.reset();
     ui.cursors = [Interface.cursor];
     ui.list = DisplayBuilder.build([
@@ -262,37 +303,31 @@ class SMain extends State {
     [
        login = new WLogin()
       ,new WPortrait()
-      ,new WHelp()
+      ,new WBattery()
+      ,help = new WHelp()
       ,story = new WStory()
       ,lift = new WLift()
-      //,new WTest(50, 50)
-      /*,new WText("test", "Info", 100, 50,
-"$M\"\"Welcome
-$A_____________________________
-Welcome to Battery City!")*/
-      //,new WFolder("fold", "Folder", 50, 50, 3, 2)
-      //,new WLockpick(cast Main.puzzlesMap.get("lockpk3"))
-      //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
-    for (w in windows) {
-      w.show = false;
+    for (p in Main.puzzles) {
+      p.spawn().map(updateWindow);
     }
     showWindow(login);
-    //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
-    //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
-    //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
     
     // Debug setup:
-    login.username = "aurel";
-    login.doLogin();
-    startPuzzle("maze0");
-    //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
+    //login.username = "aurel";
+    //login.doLogin();
+    //overworld.locked = false;
+    //startPuzzle("maze0");
+    //overworld.enter("The city");
   }
   
   override public function tick() {
     if (!login.show && !bubble.show) {
-      //Story.tick();
+      Story.tick();
+      overworld.lastClicked = NONE;
     }
+    //Story.POINTS = 102;
+    //overworld.enter("Recreation room");
     desktop.tick(ui.list[0]);
     bubble.tick(bubbleDisplay);
     for (w in windows) {

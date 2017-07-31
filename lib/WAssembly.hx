@@ -46,17 +46,21 @@ class WAssembly extends Window {
   public var puzzle:PAssembly;
   public var part:Int;
   public var bmp:Bitmap;
+  public var lastX:Int;
+  public var lastY:Int;
   
   public function new(puzzle:PAssembly, part:Int) {
     super();
     this.puzzle = puzzle;
     this.part = part;
-    x = y = 50 + part * 20;
+    x = y = lastX = lastY = 50 + part * 20;
     w = contentW = pieces[puzzle.num][part].width;
     h = contentH = pieces[puzzle.num][part].height;
-    id = "assembly" + part;
+    id = 'assembly${puzzle.id}p$part';
+    help = "assembly";
     title = '${puzzle.id}.pzl';
     icon = Icon.KEY;
+    close = puzzle.stop;
     bmp = pieces[puzzle.num][part].fluent >> new Copy();
     contents = [
         new EBitmap(null, 0, 0, bmp)
@@ -64,8 +68,13 @@ class WAssembly extends Window {
     remap();
   }
   
-  override public function drag(rx:Int, ry:Int):Void {
-    puzzle.check();
+  override public function tick():Void {
+    super.tick();
+    if (lastX != x || lastY != y) {
+      puzzle.check();
+    }
+    lastX = x;
+    lastY = y;
   }
   
   public function edgeVert(off:Int, size:Int, right:Bool, correct:Bool):Void {

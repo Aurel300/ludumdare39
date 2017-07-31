@@ -55,8 +55,9 @@ You work in Battery City (B.C.), in a battery tower. It is a tower which fills u
  - [ ] story gameplay
    - [x] outline
    - [ ] script
+   - [ ] walkthrough
  - [ ] puzzle gameplay
-   - [ ] concepts [`doc/PUZZLE.md`](doc/PUZZLE.md)
+   - [x] concepts [`doc/PUZZLE.md`](doc/PUZZLE.md)
    - [ ] balance / qa
    - [x] lockpick 5 / 5?
    - [x] rapid 1 / 1

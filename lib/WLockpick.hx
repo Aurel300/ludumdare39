@@ -16,9 +16,10 @@ class WLockpick extends Window {
     x = y = 50;
     w = contentW = 150;
     h = contentH = 46;
-    id = "lockpick";
+    id = help = puzzle.id;
     title = '${puzzle.id}.pzl';
     icon = Icon.KEY;
+    close = puzzle.stop;
     var sxpos = (w >> 1) - puzzle.pins.length * 7;
     var xpos = sxpos;
     var ypos = 6;
@@ -39,11 +40,6 @@ class WLockpick extends Window {
       contents.push(new EDisable(null, sxpos, ypos - 38, puzzle.pins.length * 14, 35));
       h += 14;
       ypos += 14;
-    }
-    if (puzzle.instruct != null) {
-      var text = new EText("instr", 0, ypos, 150, 150, puzzle.instruct);
-      contents.push(text);
-      h += text.textHeight;
     }
     remap();
     check();
@@ -93,7 +89,6 @@ class WLockpick extends Window {
       check();
       
       case "unlock":
-      removeSelf();
       puzzle.solve();
     }
   }

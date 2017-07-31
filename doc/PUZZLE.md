@@ -2,7 +2,21 @@
 
 The player has to solve puzzles (in the p'n'c sense of the word) to ensure the battery tower is charged sufficiently. The puzzles (in the more literal sense of the word) are placed in fuseboxes around town.
 
-A couple of jokers are given to the player to skip harder puzzles if they want to.
+<s>A couple of jokers are given to the player to skip harder puzzles if they want to.</s> There is a walkthrough available.
+
+## Point allocation ##
+
+| id | points |
+| --- | --- |
+| maze1 | 10 |
+| lockpk0 | 5 |
+| lockpk1 | 10 |
+| lockpk2 | 15 |
+| lockpk3 | 20 |
+| lockpk4 | 20 |
+| rapid0 | 5 |
+| assmbl0 | 5 |
+| assmbl1 | 10 |
 
 ## Block puzzles ##
 

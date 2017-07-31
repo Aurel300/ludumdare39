@@ -52,26 +52,17 @@ class PAssembly extends Puzzle {
   public function new(num:Int) {
     super('assmbl$num');
     this.num = num;
-    switch (num) {
-      case _:
-    }
+    sequel = (num < 1 ? 'assmbl${num + 1}' : null);
+    points = (switch (num) {
+        case 0: 5;
+        case _: 10;
+      });
   }
   
   override public function spawn():Array<Window> {
-    if (windows != null) {
-      for (w in windows) {
-        w.removeSelf();
-      }
-    }
     windows = [ for (i in 0...pieces[num].length) new WAssembly(this, i) ];
     check();
     return cast windows;
-  }
-  
-  override public function solve():Void {
-    super.solve();
-    windows.map(w -> w.removeSelf());
-    windows = null;
   }
   
   public function check():Void {
@@ -109,5 +100,15 @@ class PAssembly extends Puzzle {
     if (incorrect == 0) {
       solve();
     }
+  }
+  
+  override public function start():Void {
+    super.start();
+    windows.map(Main.wm.showWindow);
+  }
+  
+  override public function stop():Void {
+    super.stop();
+    windows.map(w -> w.show = false);
   }
 }

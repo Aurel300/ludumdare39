@@ -1,9 +1,13 @@
 package lib;
 
 class Puzzle {
+  public static var solving:Int = 0;
+  
   public var id:String;
   public var locked:Bool;
   public var solved:Bool;
+  public var sequel:String;
+  public var points:Int = 0;
   
   public function new(id:String) {
     this.id = id;
@@ -15,10 +19,16 @@ class Puzzle {
     return null;
   }
   
+  public function start():Void {
+    solving++;
+  }
+  
+  public function stop():Void {
+    solving--;
+  }
+  
   public function solve():Void {
-    if (Save.solved.indexOf(id) == -1) {
-      Save.solved.push(id);
-      solved = true;
-    }
+    stop();
+    Main.wm.solvePuzzle(id);
   }
 }
