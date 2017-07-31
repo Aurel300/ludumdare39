@@ -13,7 +13,7 @@ this guide - solving the
 puzzles yourself is a lot
 more fun!
 Feel free to close this
-window if you like to play
+window if you'd like to play
 without help.",
 "Basic orientation
 
@@ -27,6 +27,7 @@ an icon.",
 
 The icons represent:
 - Your character portrait
+- Current room
 - Game map
 - Battery status
 - This guide"

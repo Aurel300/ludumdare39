@@ -32,13 +32,15 @@ class Main extends Application {
             ,Embed.getBitmap("assembly", "png/assembly.png")
             ,Embed.getBitmap("story1", "png/story1.png")
             ,Embed.getBitmap("story2", "png/story2.png")
+            ,Embed.getBitmap("story3", "png/story3.png")
+            ,Embed.getBitmap("story4", "png/story4.png")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
                 pal = [ for (i in 0...11) itf.get(i * 8, 0) ];
                 return false;
               })
             ,new AssetBind([
-              "console_font", "pal", "face", "assembly", "story1"
+              "console_font", "pal", "face", "assembly", "story1", "story2", "story3", "story4"
             ], (am, _) -> {
                 var raw = am.getBitmap("console_font").fluent;
                 var itf = am.getBitmap("interface").fluent;
@@ -91,9 +93,6 @@ class Main extends Application {
         ,Keyboard
         ,Mouse
       ]);
-    Save.init();
-    PMaze.init();
-    am = assetManager;
     puzzles = [
          new PLockpick(0)
         ,new PLockpick(1)
@@ -104,11 +103,16 @@ class Main extends Application {
         ,new PAssembly(0)
         ,new PAssembly(1)
         ,new PMaze(0)
+        ,new PMaze(1)
       ];
     puzzlesMap = new Map<String, Puzzle>();
     for (p in puzzles) {
       puzzlesMap.set(p.id, p);
     }
+    Save.init();
+    Story.init();
+    PMaze.init();
+    am = assetManager;
     preloader = new TNPreloader(this, "main", true);
     addState(wm = new SMain(this));
     mainLoop();

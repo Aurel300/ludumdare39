@@ -24,9 +24,7 @@ class EBubble extends UIElement {
     return text;
   }
   
-  public function new(
-    
-  ) {
+  public function new() {
     super("bubble", 0, 0);
     bmp = Platform.createBitmap(360, BUBBLE_HEIGHT - 10, 0);
     set_text("");

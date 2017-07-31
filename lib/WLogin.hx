@@ -75,7 +75,7 @@ sincerely apologise.")
     blinkPh.tick();
   }
   
-  private function doLogin():Void {
+  public function doLogin():Void {
     Save.username = username;
     show = false;
     Main.wm.desktop.show = true;

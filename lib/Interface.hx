@@ -36,7 +36,7 @@ class Interface {
   
   public static function init(itf:Bitmap):Void {
     var bf = itf.fluent;
-    cursors = Vector.fromArrayCopy([ for (i in 0...2) bf >> new Cut(48 + i * 16, 24, 16, 16) ]);
+    cursors = Vector.fromArrayCopy([ for (i in 0...4) bf >> new Cut(i * 16, 56, 16, 16) ]);
     cursor = new Cursor(cursors[0], -1, -2);
     bubble = bf >> new Cut(48, 8, 16, 16);
     bubbleCut1 = new Point2DI(5, 5);
@@ -109,11 +109,11 @@ class Interface {
             ,WithXY(5, 13)
             ,Panel(null, ch)
           ])
-        ,BoxPanel(barBG, buttonCut1, buttonCut2, w - 30, 10, [
+        ,BoxPanel(barBG, buttonCut1, buttonCut2, FM.maxI(1, w - 30), 10, [
              WithXY(15, h + 3)
             ,WithShow(scroll)
           ])
-        ,BoxPanel(barBG, buttonCut1, buttonCut2, 10, h - 20, [
+        ,BoxPanel(barBG, buttonCut1, buttonCut2, 10, FM.maxI(1, h - 20), [
              WithXY(w - 5, 23)
             ,WithShow(scroll)
           ])
@@ -153,7 +153,7 @@ class Interface {
   public static function windowTitle(
     icon:Icon, title:String, focused:Bool, minimisable:Bool, closable:Bool, w:Int
   ):DisplayType {
-    var text = Platform.createBitmap(FM.maxI(w - 25, 1), 10, 0);
+    var text = Platform.createBitmap(FM.maxI(w - 5 - (closable ? 10 : 0) - (minimisable ? 10 : 0), 1), 10, 0);
     Main.font[5].render(text, 0, 0, title);
     return SolidPanel(Main.pal[focused ? 7 : 6], w + 4, 10, [
          WithName("title")
@@ -207,5 +207,13 @@ class Interface {
     var panel = (cast display:SolidPanel);
     panel.colour = Main.pal[focused ? 7 : 6];
     panel.w = w + 4;
+  }
+  
+  public static function updateWindowText(
+    display:Display, title:String, w:Int
+  ):Void {
+    var text = Platform.createBitmap(FM.maxI(w - 25, 1), 10, 0);
+    Main.font[5].render(text, 0, 0, title);
+    (cast display.children[1]:Panel).bmp = text;
   }
 }

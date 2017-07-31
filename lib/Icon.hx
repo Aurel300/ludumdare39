@@ -22,5 +22,11 @@ abstract Icon(Int) from Int to Int {
   var TRAPDOOR_CLOSED = 17;
   var PUZZLE = 18;
   var PUZZLE_SOLVED = 19;
-  var ICON_COUNT = 20;
+  var SPEECH = 20;
+  var LIFT = 21;
+  var YOU_COLOUR = 22;
+  var SHARON = 23;
+  var BOSS = 24;
+  var PLANT = 25;
+  var ICON_COUNT = 26;
 }

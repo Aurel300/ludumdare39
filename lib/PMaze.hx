@@ -14,7 +14,12 @@ enum RoomIcon {
   Goal;
   DoorTo(title:String);
   TrapdoorTo(title:String);
+  Lift;
+  Batterycorp;
   SpawnFrom(title:String);
+  SpawnAny;
+  Sharon;
+  Plant;
   Key;
   Lock(unlocks:RoomIcon);
 }
@@ -25,6 +30,33 @@ class PMaze extends Puzzle {
   public static function init():Void {
     mazes = [
         [
+          {w: 4, h: 3, title: "Your office", icon: Icon.SPEECH, icons: [
+             None, None, None, None
+            ,None, SpawnFrom(""), Lift, None
+            ,None, None, SpawnFrom("The lift"), None
+          ], instruct: null}
+          ,{w: 1, h: 1, title: "The lift", icon: Icon.LIFT, icons: [
+            SpawnAny
+          ], instruct: null}
+          ,{w: 5, h: 2, title: "Dispatching", icon: Icon.SPEECH, icons: [
+             Lift, None, None, Sharon, None
+            ,SpawnFrom("The lift"), None, None, None, Plant
+          ], instruct: null}
+          ,{w: 3, h: 6, title: "Foyer", icon: Icon.SPEECH, icons: [
+             None, Lift, None
+            ,None, SpawnFrom("The lift"), None
+            ,None, None, None
+            ,None, None, None
+            ,None, None, None
+            ,Plant, DoorTo("The city"), Plant
+          ], instruct: null}
+          ,{w: 9, h: 4, title: "The city", icon: Icon.SPEECH, icons: [
+             None, None, None, None, Batterycorp, None, None, None, None
+            ,None, None, None, None, SpawnAny, None, None, None, None
+            ,None, None, None, None, None, None, None, None, None
+            ,None, None, None, None, None, None, None, None, None
+          ], instruct: null}
+        ], [
           {w: 3, h: 2, title: "Start", icon: Icon.KEY, icons: [
              SpawnFrom(""), None, None
             ,None, SpawnFrom("2"), DoorTo("2")
@@ -94,9 +126,13 @@ access your items.
         case Goal: DOOR;
         case DoorTo(_): DOOR;
         case TrapdoorTo(_): TRAPDOOR;
-        case SpawnFrom(_): NONE;
+        case SpawnFrom(_) | SpawnAny: NONE;
         case Key: KEY;
         case Lock(_): LOCK;
+        case Sharon: SHARON;
+        case Plant: PLANT;
+        case Lift: LIFT;
+        case Batterycorp: BATTERY;
       });
   }
   
@@ -109,22 +145,30 @@ access your items.
     return -1;
   }
   
+  public function enter(title:String):Void {
+    var roomId = getRoomId(title);
+    placePlayer(roomId, state[statePlayer].title);
+    windows[roomId].show = true;
+    Main.wm.focusWindow(windows[roomId]);
+  }
+  
   public function checkDrag(i:Int, folder:EFolder, onto:EFolder):Bool {
     switch (folder.draggedIcon) {
-      case YOU:
+      case YOU | YOU_COLOUR:
       if (folder != onto) {
-        // error: use the doors
+        Main.wm.say(false, "You are not in that room!");
         return true;
       }
       switch (state[i].icons[folder.draggedTo]) {
-        case DoorTo(title) | TrapdoorTo(title):
-        var roomId = getRoomId(title);
-        placePlayer(roomId, state[statePlayer].title);
-        windows[roomId].show = true;
-        Main.wm.focusWindow(windows[roomId]);
+        case DoorTo(title) | TrapdoorTo(title): enter(title);
+        case Lift | Batterycorp: enter("The lift");
         
         case Goal:
         solve();
+        
+        case Lock(_):
+        Main.wm.say(false, "You need to unlock this with a key first.");
+        return true;
         
         case _:
         return true;
@@ -139,9 +183,9 @@ access your items.
       switch (onto.icons[onto.draggedTo]) {
         case YOU:
         if (folder != onto) {
+          Main.wm.say(false, "You must be in the same room to pick up items.");
           return true;
         } else {
-          // error: must be in the same room to pick up
         }
         folder.draggedFrom = -1;
         folder.draggedIcon = NONE;
@@ -154,7 +198,7 @@ access your items.
         
         case LOCK:
         if (folder != inv.folder) {
-          // error: must pick up the key first
+          Main.wm.say(false, "You need to pick up the key first.");
           return true;
         }
         if (onto == windows[statePlayer].folder) {
@@ -167,10 +211,10 @@ access your items.
             return false;
             
             case _:
-            // error: they key doesn't fit?
+            Main.wm.say(false, "The key doesn't fit ...?");
           }
         } else {
-          // error: must be in the same room to unlock
+          Main.wm.say(false, "You must be in the same room to unlock locks.");
         }
         
         case _:
@@ -187,12 +231,18 @@ access your items.
       inv.show = true;
       Main.wm.focusWindow(inv);
       
+      case DOOR | TRAPDOOR | LIFT | BATTERY:
+      Main.wm.say(false, "Drag and drop yourself onto doors to enter them.");
+      
       case _:
     }
     return true;
   }
   
   public function placePlayer(i:Int, from:String):Void {
+    if (num == 0 && from != "") {
+      windows[statePlayer].show = false;
+    }
     statePlayer = i;
     if (state[i].instruct != null) {
       info.el.text = state[i].instruct;
@@ -201,15 +251,31 @@ access your items.
       }
       info.show = true;
     }
+    if (num == 0) {
+      switch (state[i].title) {
+        case "Your office":
+        Main.wm.story.showStory("story1");
+        
+        case "Foyer":
+        Main.wm.story.showStory("story2");
+        
+        case "The lift":
+        Main.wm.story.showStory("story3");
+        Main.wm.showWindow(Main.wm.lift);
+        
+        case "Dispatching":
+        Main.wm.story.showStory("story4");
+      }
+    }
     for (j in 0...state[i].icons.length) {
-      switch (state[i].icons[j]) {
-        case SpawnFrom(f):
-        if (f == from) {
-          windows[i].folder.icons[j] = YOU;
-          windows[i].folder.doUpdate = true;
-          return;
-        }
-        case _:
+      if (switch (state[i].icons[j]) {
+          case SpawnAny: true;
+          case SpawnFrom(f): (f == from);
+          case _: false;
+        }) {
+        windows[i].folder.icons[j] = (num == 0 ? YOU_COLOUR : YOU);
+        windows[i].folder.doUpdate = true;
+        return;
       }
     }
   }
@@ -232,10 +298,13 @@ access your items.
     inv.show = false;
     inv.close = () -> { inv.show = false; };
     windows = [ for (r in state) {
-        var f = new WFolder('maze$i', r.title, 50 + i * 10, 50 + i * 10, r.w, r.h, r.icons.map(getIcon));
+        var f = new WFolder('maze$i', r.title, 50 + (i % 7) * 10, 50 + (i % 6) * 10, r.w, r.h, r.icons.map(getIcon));
         f.icon = r.icon;
         f.folder.dragFunc = checkDrag.bind(i, _, _);
         f.folder.doubleFunc = checkDouble.bind(i, _);
+        if (num == 0) {
+          f.closable = false;
+        }
         f.close = (function (ci:Int):Void {
           if (ci == statePlayer) {
             return;

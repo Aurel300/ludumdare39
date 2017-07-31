@@ -12,7 +12,9 @@ class SMain extends State {
   public var ui:UI;
   public var windows:Array<Window>;
   public var focused:Window;
+  public var lift:WLift;
   public var login:WLogin;
+  public var story:WStory;
   public var desktop:EDesktop;
   public var bubble:EBubble;
   public var bubbleDisplay:Display;
@@ -29,6 +31,10 @@ class SMain extends State {
     ui.listen("displaydrop", elementDrop);
   }
   
+  public function startPuzzle(puzzle:String):Void {
+    Main.puzzlesMap.get(puzzle).spawn().map(updateWindow);
+  }
+  
   public function say(player:Bool, text:String, ?origin:String):Void {
     ui.list.remove(bubbleDisplay);
     if (player) {
@@ -37,9 +43,24 @@ class SMain extends State {
       focusWindow(win);
       bubble.setXY(win.x, win.y);
       WPortrait.talking = true;
+    } else if (origin == null) {
+      bubble.setXY(0, 50);
     }
     bubble.say(player, text, player ? Save.username : origin);
     ui.list.push(bubbleDisplay);
+  }
+  
+  public function showWindow(win:Window):Void {
+    if (win == null) {
+      return;
+    }
+    win.show = true;
+    focusWindow(win);
+    if (focused.minimised) {
+      focused.minimise();
+      clampWindow(win);
+      updateWindow(focused);
+    }
   }
   
   public function focusWindow(win:Window):Void {
@@ -51,10 +72,6 @@ class SMain extends State {
       }
       focused = win;
       focused.focused = true;
-      if (focused.minimised) {
-        focused.minimise();
-        clampWindow(win);
-      }
       updateWindow(focused);
     }
   }
@@ -246,6 +263,8 @@ class SMain extends State {
        login = new WLogin()
       ,new WPortrait()
       ,new WHelp()
+      ,story = new WStory()
+      ,lift = new WLift()
       //,new WTest(50, 50)
       /*,new WText("test", "Info", 100, 50,
 "$M\"\"Welcome
@@ -256,17 +275,24 @@ Welcome to Battery City!")*/
       //,new WRapid(cast Main.puzzlesMap.get("rapid0"))
     ].map(updateWindow);
     for (w in windows) {
-      if (w != login) {
-        w.show = false;
-      }
+      w.show = false;
     }
-    focusWindow(login);
+    showWindow(login);
     //Main.puzzlesMap.get("rapid0").spawn().map(updateWindow);
     //Main.puzzlesMap.get("assmbl1").spawn().map(updateWindow);
+    //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
+    
+    // Debug setup:
+    login.username = "aurel";
+    login.doLogin();
+    startPuzzle("maze0");
     //Main.puzzlesMap.get("maze0").spawn().map(updateWindow);
   }
   
   override public function tick() {
+    if (!login.show && !bubble.show) {
+      //Story.tick();
+    }
     desktop.tick(ui.list[0]);
     bubble.tick(bubbleDisplay);
     for (w in windows) {
