@@ -103,7 +103,21 @@ Move the windows around until
 they form a single gadget.
 The edges of the windows turn
 green if you place them next
-to their correct neighbour."
+to their correct neighbour.",
+"shake%Shake
+
+While the sentence is a
+logical paradox, it probably
+cannot be agreed with.
+
+   How can you express
+   disagreement?",
+"avoid%Avoid
+
+A steady hand is required!
+Click Start, then move to
+Fix! while avoiding any black
+bits."
   ];
   static var BOOKMARKS:Map<String, Int>;
   

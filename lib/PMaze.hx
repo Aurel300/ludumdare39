@@ -54,8 +54,8 @@ class PMaze extends Puzzle {
         ], instruct: null}
         ,{w: 9, h: 4, title: "The city", icon: Icon.SPEECH, icons: [
            None, None, None, None, Batterycorp, None, None, None, None
-          ,None, Puzzle("assmbl1"), Puzzle("lockpk3"), Puzzle("lockpk0"), SpawnAny, Puzzle("assmbl0"), None, None, None
-          ,None, Puzzle("lockpk4"), Puzzle("rapid0"), Puzzle("lockpk1"), Puzzle("maze1"), None, Puzzle("lockpk2"), None, None
+          ,None, Puzzle("avoid0"), Puzzle("lockpk3"), Puzzle("lockpk0"), SpawnAny, Puzzle("assmbl0"), Puzzle("shake0"), Puzzle("maze2"), None
+          ,None, Puzzle("lockpk4"), Puzzle("rapid0"), Puzzle("lockpk1"), Puzzle("maze1"), Puzzle("assmbl1"), Puzzle("lockpk2"), None, None
           ,None, None, None, None, None, None, None, None, None
         ], instruct: null}
         ,{w: 3, h: 2, title: "Recreation room", icon: Icon.SPEECH, icons: [
@@ -123,6 +123,76 @@ double click yourself to
 access your items.
 
      Yours mazingly, DM"}
+      ], [
+        {w: 3, h: 1, title: "Start", icon: Icon.KEY, icons: [
+           SpawnAny, None, DoorTo("A")
+        ], instruct:
+"$M\"\"E.Z.M.A
+$A_____________________________
+This time it is the
+$IRIDDLE MAZE$A"}
+        ,{w: 3, h: 3, title: "A", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,TrapdoorTo("Start"), None, TrapdoorTo("B")
+        ], instruct:
+"If you take the right path,
+you can continue. If not,
+you will go back to the
+start. <- -- -- -- -- ->"}
+        ,{w: 3, h: 3, title: "B", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,TrapdoorTo("C"), None, TrapdoorTo("Start")
+        ], instruct:
+"If you take the right door,
+you will get to see more
+doors."}
+        ,{w: 3, h: 3, title: "C", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,TrapdoorTo("D"), None, TrapdoorTo("Start")
+        ], instruct:
+"Take the left path in the
+next three junctions (incl.
+this one) to progress.
+This is the first junction.
+
+($IDon't listen to them!$A)"}
+        ,{w: 3, h: 3, title: "D", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,TrapdoorTo("E"), None, TrapdoorTo("Start")
+        ], instruct:
+"Just kidding, go right.
+$M\"\"LOST?"}
+        ,{w: 3, h: 3, title: "E", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,TrapdoorTo("F"), None, TrapdoorTo("Key")
+        ], instruct:
+"Free key if you go right.
+I promise!"}
+        ,{w: 3, h: 3, title: "Key", icon: Icon.KEY, icons: [
+            TrapdoorTo("A"), SpawnAny, TrapdoorTo("D")
+           ,None, Key, None
+           ,TrapdoorTo("Key"), None, TrapdoorTo("E")
+        ], instruct:
+"And you wouldn't believe me."}
+        ,{w: 3, h: 3, title: "F", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,Lock(TrapdoorTo("G")), None, Lock(TrapdoorTo("G"))
+        ], instruct:
+"You progressed ...
+But did you get the key?"}
+        ,{w: 3, h: 3, title: "G", icon: Icon.KEY, icons: [
+            None, SpawnAny, None
+           ,None, None, None
+           ,None, Goal, None
+        ], instruct:
+"Where did the other locked
+door lead to ...?"}
       ]
     ];
   
@@ -140,7 +210,11 @@ access your items.
   
   public function new(num:Int) {
     super('maze$num');
-    points = 10;
+    points = (switch (num) {
+        case 1: 5;
+        case 2: 10;
+        case _: 0;
+      });
     this.num = num;
   }
   

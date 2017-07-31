@@ -17,6 +17,7 @@ class SMain extends State {
   public var lift:WLift;
   public var login:WLogin;
   public var story:WStory;
+  public var settings:WSettings;
   
   public var desktop:EDesktop;
   public var bubble:EBubble;
@@ -34,7 +35,7 @@ class SMain extends State {
     overworld = (cast Main.puzzlesMap.get("maze0"):PMaze);
     overworld.locked = false;
     ui = new UI([]);
-    ui.doubleClick = 13;
+    ui.doubleClick = 15;
     ui.listen("displayclick", elementClick);
     ui.listen("displaydrag", elementDrag);
     ui.listen("displaydrop", elementDrop);
@@ -309,6 +310,7 @@ class SMain extends State {
       ,help = new WHelp()
       ,story = new WStory()
       ,lift = new WLift()
+      ,settings = new WSettings()
     ].map(updateWindow);
     for (p in Main.puzzles) {
       p.spawn().map(updateWindow);
@@ -316,9 +318,8 @@ class SMain extends State {
     showWindow(login);
     
     // Debug setup:
-    //login.username = "aurel";
-    //login.doLogin();
-    //overworld.locked = false;
+    login.username = "aurel";
+    login.doLogin();
     //startPuzzle("maze0");
     //overworld.enter("The city");
   }
@@ -328,7 +329,7 @@ class SMain extends State {
       Story.tick();
       overworld.lastClicked = NONE;
     }
-    Story.POINTS = 102;
+    //Story.POINTS = 102;
     //overworld.enter("Recreation room");
     desktop.tick(ui.list[0]);
     bubble.tick(bubbleDisplay);

@@ -14,9 +14,9 @@ class PLockpick extends Puzzle {
     sequel = (num < 4 ? 'lockpk${num + 1}' : null);
     points = (switch (num) {
         case 0: 5;
-        case 1: 10;
-        case 2: 15;
-        case 3: 20;
+        case 1: 5;
+        case 2: 10;
+        case 3: 15;
         case _: 20;
       });
     var prng = new Generator(new XORShift(0x70C83D01));

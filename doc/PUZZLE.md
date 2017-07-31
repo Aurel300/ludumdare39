@@ -6,17 +6,20 @@ The player has to solve puzzles (in the p'n'c sense of the word) to ensure the b
 
 ## Point allocation ##
 
-| id | points |
-| --- | --- |
-| maze1 | 10 |
-| lockpk0 | 5 |
-| lockpk1 | 10 |
-| lockpk2 | 15 |
-| lockpk3 | 20 |
-| lockpk4 | 20 |
-| rapid0 | 5 |
-| assmbl0 | 5 |
-| assmbl1 | 10 |
+| id | points | unlock |
+| --- | --- | --- |
+| maze1 | 5 | start |
+| maze2 | 10 | maze1 |
+| lockpk0 | 5 | start |
+| lockpk1 | 5 | lockpk0 |
+| lockpk2 | 10 | lockpk1 |
+| lockpk3 | 15 | lockpk2 |
+| lockpk4 | 20 | lockpk3 |
+| rapid0 | 5 | start |
+| assmbl0 | 5 | start |
+| assmbl1 | 10 | assmbl0 |
+| shake0 | 5 | lockpk1, maze1 |
+| avoid0 | 5 | rapid0, assmbl1 |
 
 ## Block puzzles ##
 

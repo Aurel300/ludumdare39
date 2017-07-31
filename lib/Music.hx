@@ -164,6 +164,21 @@ class Music {
                [5, 5, 9, 9, 3, 3, N, 5, N, 5, N, 5, 5, 9, 9, 3, 3, N, 5, N, 5, N, 5, 5, 9, 9,13,13, N,21, N,23, N, 5, 5, 9, 9, 3, 3, N, 5, N, 5, N,]
             ]
         }]}
+        ,{name: "monday", tempo: 4096, riffs: [{
+          // pulse
+           instr: Melody
+          ,beat: 16
+          ,start: 0
+          ,repeat: 30
+          ,notes: [[5]]
+        }, {
+          // drum
+           instr: Drum
+          ,beat: 1
+          ,start: 0
+          ,repeat: 30
+          ,notes: [[N, N, N, N, N, 0, N, N, 1, N, N, 0, N, N]]
+        }]}
       ];
     
     function makeTrack(t:Track):Vector<Int> {
@@ -207,18 +222,15 @@ class Music {
       );
     channels = Vector.fromArrayCopy([ for (i in 0...CHANNUM) -1 ]);
     pos = Vector.fromArrayCopy([ for (i in 0...CHANNUM) 0 ]);
-    /*
-    pattern = TRACKS[0];
-    function seek(beat:Int):Int {
-      var pi = 0;
-      while (pi < pattern.length && beat > 0) {
-        pi += pattern[pi] + 1;
-        beat--;
-      }
-      return pi;
+  }
+  
+  function seek(beat:Int):Int {
+    var pi = 0;
+    while (pi < pattern.length && beat > 0) {
+      pi += pattern[pi] + 1;
+      beat--;
     }
-    patpos = 0;
-    play();*/
+    return pi;
   }
   
   public static function playTrack(id:String):Void {
@@ -282,5 +294,8 @@ class Music {
       }
     }
     beat -= 8192;
+    for (i in 0...16384) {
+      buffer[i] *= Main.volumeMusic;
+    }
   }
 }

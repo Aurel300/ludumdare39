@@ -18,11 +18,13 @@ class Main extends Application {
   public static var puzzles:Array<Puzzle>;
   public static var puzzlesMap:Map<String, Puzzle>;
   public static var wm:SMain;
+  public static var volumeMusic:Float = 1;
+  public static var volumeSound:Float = 1;
   
   public static function main() Platform.boot(() -> new Main());
   
   public static function sound(id:String):Void {
-    Main.am.getSound(id).play();
+    Main.am.getSound(id).play(Once, volumeSound);
   }
   
   public function new() {
@@ -111,6 +113,7 @@ class Main extends Application {
                   font.push(f);
                 }
                 Interface.init(itf);
+                WAvoid.init(itf);
                 WPortrait.init(am.getBitmap("face"));
                 WAssembly.init(am.getBitmap("assembly"));
                 Music.init();
@@ -132,6 +135,9 @@ class Main extends Application {
         ,new PAssembly(1)
         ,new PMaze(0)
         ,new PMaze(1)
+        ,new PMaze(2)
+        ,new PShake(0)
+        ,new PAvoid(0)
       ];
     puzzlesMap = new Map<String, Puzzle>();
     for (p in puzzles) {
@@ -140,7 +146,7 @@ class Main extends Application {
     Save.init();
     Story.init();
     am = assetManager;
-    preloader = new TNPreloader(this, "boot", true);
+    preloader = new TNPreloader(this, "main", true);
     addState(new SBoot(this));
     addState(wm = new SMain(this));
     addState(new SEnd(this));

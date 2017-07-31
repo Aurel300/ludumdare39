@@ -33,5 +33,7 @@ abstract Icon(Int) from Int to Int {
   var DESK = 28;
   var SOUND = 29;
   var DOUBLE_CLICK = 30;
-  var ICON_COUNT = 31;
+  var SETTINGS = 31;
+  var MUSIC = 32;
+  var ICON_COUNT = 33;
 }

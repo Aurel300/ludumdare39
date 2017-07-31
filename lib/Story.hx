@@ -11,6 +11,10 @@ class Story {
   
   public static var PLOT:Array<PlotPoint> = [
       {t: [Once], a: [
+         UnlockPuzzle("avoid0")
+        ,StartPuzzle("avoid0")
+        ,PlayMusic("intro")
+         /*
          ShowStory("story1")
         ,SayPlayer("Another lousy Monday.")
         ,SayPlayer("They don't pay me enough for what I do around here.")
@@ -33,7 +37,7 @@ class Story {
         ,ShowStory("story1")
         ,SayPlayer("I'd better talk to Sharon at dispatching.")
         ,StartPuzzle("maze0")
-        ,OpenWindow("help")
+        ,OpenWindow("help")*/
       ]}, {t: [Once, ClickedOn(SHARON), Not(FlagSet("dispatched"))], a: [
          SetFlag("dispatched", true)
         ,SayPlayer("Hey, Sharon.")
@@ -206,6 +210,10 @@ class Story {
         ,SayOrigin("Maybe the next one will find them?", "The boss?")
         ,SayOrigin("We can only hope. *click*", "Voice from the phone")
         ,End(1)
+      ]}, {t: [Once, Solved("lockpk1"), Solved("maze1")], a: [
+        UnlockPuzzle("shake0")
+      ]}, {t: [Once, Solved("rapid0"), Solved("assmbl1")], a: [
+        UnlockPuzzle("avoid0")
       ]}
     ];
   
@@ -283,6 +291,7 @@ class Story {
       case AddPoints(add): POINTS += add; false;
       case SetPoints(total): POINTS = total; false;
       case PlaySound(id): Main.sound(id); false;
+      case PlayMusic(id): Music.playTrack(id); false;
       case OpenWindow(id): Main.wm.showWindow(Main.wm.getWindow(id)); false;
       case End(num): Story.ENDING = num; Main.wm.app.applyState(Main.wm.app.getStateById("end")); true;
       case _: false;
@@ -318,6 +327,7 @@ enum Action {
   AddPoints(add:Int);
   SetPoints(total:Int);
   PlaySound(id:String);
+  PlayMusic(id:String);
   OpenWindow(id:String);
   End(num:Int);
 }

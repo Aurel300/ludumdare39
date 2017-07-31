@@ -48,8 +48,8 @@ class WPortrait extends Window {
   var phHair:Phaser;
   var lastX:Int;
   var lastY:Int;
-  var dragX:Int;
-  var dragY:Int;
+  public var dragX:Int;
+  public var dragY:Int;
   
   public function new() {
     super();
@@ -99,6 +99,8 @@ class WPortrait extends Window {
       }
       bg.blitAlpha(MOUTH[lastTalk], HMARGIN + 8 - dragX, HMARGIN + 19 + phHair.get(true) - dragY);
     }
+    if (FM.absI(dragX) < 3) dragX = 0;
+    if (FM.absI(dragY) < 3) dragY = 0;
   }
   
   override public function tick():Void {
