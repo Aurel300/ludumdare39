@@ -15,8 +15,8 @@ class Story {
         ,SayPlayer("Another lousy Monday.")
         ,SayPlayer("They don't pay me enough for what I do around here.")
         ,SayPlayer("I have to talk to the boss about this.")
-        //,PlaySound("mail")
-        ,ClickThrough
+        ,PlaySound("fleep")
+        ,SayOrigin("You've got mail!", "Computer")
         ,SayPlayer("Oh great, what now ...")
         ,SetPoints(100)
         ,ShowStory("story2")
@@ -117,40 +117,42 @@ class Story {
         SayPlayer("I wonder where the light source is in this room.")
       ]}, {t: [ClickedOn(INVISIBLE), Not(FlagSet("eggShadow"))], a: [
          SayPlayer("Judging by that shadow, there should be somebody ... here!")
-        ,SayText("$M\"Spooookyy")
+        ,PlaySound("wizzupI"), SayText("$M\"Spooookyy")
         ,SayPlayer("*gasp*")
-        ,SayText("$M\"What?")
-        ,SayText("$M\"Have you never")
-        ,SayText("$M\"seen an invisible")
-        ,SayText("$M\"man before?")
+        ,PlaySound("wizzupI"), SayText("$M\"What?")
+        ,PlaySound("wizzupI"), SayText("$M\"Have you never")
+        ,PlaySound("wizzupI"), SayText("$M\"seen an invisible")
+        ,PlaySound("wizzupI"), SayText("$M\"man before?")
         ,SayPlayer("Well ... No, I don't think I have.")
-        ,SayText("$M\"Well nor will you.")
+        ,PlaySound("wizzupI"), SayText("$M\"Well nor will you.")
         ,SayPlayer("I ... what?")
-        ,SayText("$M\"People don't come")
-        ,SayText("$M\"here often.")
-        ,SayText("$M\"Are you lost?")
+        ,PlaySound("wizzupI"), SayText("$M\"People don't come")
+        ,PlaySound("wizzupI"), SayText("$M\"here often.")
+        ,PlaySound("wizzupI"), SayText("$M\"Are you lost?")
         ,SayPlayer("No, I am fixing power leaks.")
-        ,SayText("$M\"Oh. Amazing!")
-        ,SayText("$M\"Mine is broken.")
-        ,SayText("$M\"Could you fix it?")
+        ,PlaySound("wizzupI"), SayText("$M\"Oh. Amazing!")
+        ,PlaySound("wizzupI"), SayText("$M\"Mine is broken.")
+        ,PlaySound("wizzupI"), SayText("$M\"Could you fix it?")
         ,ShowStory("story7")
         ,ClickThrough
         ,SayPlayer("Er... How do I fix it?")
-        ,SayText("$M\"You're the expert")
+        ,PlaySound("wizzupI"), SayText("$M\"You're the expert")
         ,SayPlayer("Ok, how about this ...")
         ,ClickThrough
         ,SetFlag("eggShadow", true)
+        ,PlaySound("boing")
         ,ClickThrough
-        ,SayText("$M\"Amazing!")
-        ,SayText("$M\"Thank you!")
+        ,PlaySound("wizzupI"), SayText("$M\"Amazing!")
+        ,PlaySound("wizzupI"), SayText("$M\"Thank you!")
         ,SayPlayer("Don't mention it ...")
         ,SayText("Egg (shadow) solved!\n1 power unit restored.")
         ,ShowStory("story6")
+        ,OpenWindow("map")
         ,AddPoints(1)
       ]}, {t: [ClickedOn(INVISIBLE), FlagSet("eggShadow")], a: [
-         SayText("$M\"Thank you for")
-        ,SayText("$M\"fixing my power")
-        ,SayText("$M\"leek.")
+         PlaySound("wizzupI"), SayText("$M\"Thank you for")
+        ,PlaySound("wizzupI"), SayText("$M\"fixing my power")
+        ,PlaySound("wizzupI"), SayText("$M\"leek.")
       ]}, {t: [ClickedOn(BOSS), GotPoints(102)], a: [
          SayPlayer("Hello, boss?")
         ,SayOrigin("Oh, it's you. What do you want?", "The boss")
@@ -170,7 +172,7 @@ class Story {
         ,ClickThrough
         ,SayOrigin("Did he manage?", "Voice from the phone")
         ,SayOrigin("No ... Not even this one could find the two extra leeks.", "The boss?")
-        ,SayText("$M\"EGGSTRA LEEKS")
+        ,PlaySound("wizzupI"), SayText("$M\"EGGSTRA LEEKS")
         ,SayOrigin("We're starting to lose patience.", "Voice from the phone")
         ,SayOrigin("There is still plenty of time.", "The boss?")
         ,SayOrigin("Maybe the next one will find them?", "The boss?")
@@ -265,8 +267,13 @@ class Story {
     }
     while (QUEUE.length > 0) if (switch (QUEUE.shift()) {
       case Nop: false;
-      case SayPlayer(text): Main.wm.say(true, text); true;
-      case SayOrigin(text, origin): Main.wm.say(false, text, origin); true;
+      case SayPlayer(text): Main.sound("wizzup"); Main.wm.say(true, text); true;
+      case SayOrigin(text, origin):
+      switch (origin) {
+        case "Sharon": Main.sound("wizzupS");
+        case _:
+      }
+      Main.wm.say(false, text, origin); true;
       case SayText(text): Main.wm.say(false, text); true;
       case ClickThrough: Main.wm.clickThrough(); true;
       case UnlockPuzzle(puzzle): Main.wm.unlockPuzzle(puzzle); false;
@@ -275,7 +282,7 @@ class Story {
       case ShowStory(id): Main.wm.showWindow(Main.wm.story); Main.wm.story.showStory(id); false;
       case AddPoints(add): POINTS += add; false;
       case SetPoints(total): POINTS = total; false;
-      case PlaySound(id): Main.am.getSound(id).play(); false;
+      case PlaySound(id): Main.sound(id); false;
       case OpenWindow(id): Main.wm.showWindow(Main.wm.getWindow(id)); false;
       case End(num): Story.ENDING = num; Main.wm.app.applyState(Main.wm.app.getStateById("end")); true;
       case _: false;

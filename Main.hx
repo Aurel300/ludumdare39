@@ -21,7 +21,12 @@ class Main extends Application {
   
   public static function main() Platform.boot(() -> new Main());
   
+  public static function sound(id:String):Void {
+    Main.am.getSound(id).play();
+  }
+  
   public function new() {
+    var didInit = false;
     super([
          Framerate(30)
         ,Surface(400, 300, 1)
@@ -39,6 +44,16 @@ class Main extends Application {
             ,Embed.getBitmap("story7", "png/story7.png")
             ,Embed.getBitmap("story8", "png/story8.png")
             ,Embed.getBitmap("story9", "png/story9.png")
+            ,Embed.getSound("beep", "wav/beep.wav")
+            ,Embed.getSound("boing", "wav/boing.wav")
+            ,Embed.getSound("buppup", "wav/buppup.wav")
+            ,Embed.getSound("fleep", "wav/fleep.wav")
+            ,Embed.getSound("quillip", "wav/quillip.wav")
+            ,Embed.getSound("tom", "wav/tom.wav")
+            ,Embed.getSound("unlock", "wav/unlock.wav")
+            ,Embed.getSound("wizzup", "wav/wizzup.wav")
+            ,Embed.getSound("wizzupS", "wav/wizzupS.wav")
+            ,Embed.getSound("wizzupI", "wav/wizzupI.wav")
             ,new AssetTrigger("pal", ["interface"], (am, _) -> {
                 var itf = am.getBitmap("interface");
                 pal = [ for (i in 0...11) itf.get(i * 8, 0) ];
@@ -46,8 +61,13 @@ class Main extends Application {
               })
             ,new AssetBind([
                "console_font", "pal", "face", "assembly"
-              ,"story1", "story2", "story3", "story4", "story5", "story6", "story7", "story8", "story9"
+              ,"story1", "story2", "story3", "story4", "story5"
+              ,"story6", "story7", "story8", "story9"
             ], (am, _) -> {
+                if (didInit) {
+                  return false;
+                }
+                didInit = true;
                 var raw = am.getBitmap("console_font").fluent;
                 var itf = am.getBitmap("interface").fluent;
                 font = [ for (p in pal)
@@ -93,6 +113,7 @@ class Main extends Application {
                 Interface.init(itf);
                 WPortrait.init(am.getBitmap("face"));
                 WAssembly.init(am.getBitmap("assembly"));
+                Music.init();
                 return false;
               })
           ])
@@ -119,7 +140,8 @@ class Main extends Application {
     Save.init();
     Story.init();
     am = assetManager;
-    preloader = new TNPreloader(this, "main", true);
+    preloader = new TNPreloader(this, "boot", true);
+    addState(new SBoot(this));
     addState(wm = new SMain(this));
     addState(new SEnd(this));
     mainLoop();

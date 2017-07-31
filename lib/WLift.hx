@@ -65,6 +65,7 @@ class WLift extends Window {
         Story.LIFT_FLOOR = floor;
         posTarget = floorPos(floor);
       } else {
+        Main.sound("quillip");
         Main.wm.say(false, 'To access floor ${floor + 1}, you need to restore ${Story.FLOOR_POINTS[floor]} power units.');
       }
     }

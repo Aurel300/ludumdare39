@@ -181,6 +181,7 @@ access your items.
   }
   
   public function enter(title:String):Void {
+    Main.sound("tom");
     var roomId = getRoomId(title);
     placePlayer(roomId, state[statePlayer].title);
     windows[roomId].show = true;
@@ -216,6 +217,7 @@ access your items.
         solve();
         
         case Lock(_):
+        Main.sound("beep");
         Main.wm.say(false, "You need to unlock this with a key first.");
         return true;
         
@@ -257,6 +259,7 @@ access your items.
         if (onto == windows[statePlayer].folder) {
           switch (state[statePlayer].icons[onto.draggedTo]) {
             case Lock(unlock):
+            Main.sound("unlock");
             state[statePlayer].icons[onto.draggedTo] = unlock;
             onto.icons[onto.draggedTo] = getIcon(unlock);
             folder.doUpdate = true;
