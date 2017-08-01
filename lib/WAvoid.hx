@@ -5,7 +5,9 @@ import sk.thenet.FM;
 import sk.thenet.anim.Phaser;
 import sk.thenet.bmp.Bitmap;
 import sk.thenet.bmp.manip.*;
+import sk.thenet.geom.Point2DI;
 import sk.thenet.plat.Platform;
+import sk.thenet.stream.bmp.Bresenham;
 import sk.thenet.ui.*;
 
 class WAvoid extends Window {
@@ -62,19 +64,28 @@ class WAvoid extends Window {
     check();
   }
   
+  var lastX:Int;
+  var lastY:Int;
+  
   @:access(sk.thenet.ui.UI)
   private function check():Void {
     if (game) {
       startDisable.show = true;
       finalDisable.show = false;
-      var lmx:Int = Main.wm.ui.lmx - (this.x + 5);
-      var lmy:Int = Main.wm.ui.lmy - (this.y + 13);
-      if (FM.withinI(lmx, 0, avoidBmp.width - 1) && FM.withinI(lmy, 0, avoidBmp.height - 1)) {
-        if (avoidBmp.get(lmx, lmy).ai != 0) {
-          Main.sound("quillip");
-          game = false;
+      var lmx:Int = Main.wm.ui.lmx - (x + 5);
+      var lmy:Int = Main.wm.ui.lmy - (y + 13);
+      for (p in Bresenham.getCurve(new Point2DI(lastX, lastY), new Point2DI(lmx, lmy))) {
+        if (FM.withinI(p.x, 0, avoidBmp.width - 1)
+            && FM.withinI(p.y, 0, avoidBmp.height - 1)) {
+          if (avoidBmp.get(p.x, p.y).ai != 0) {
+            Main.sound("quillip");
+            game = false;
+            break;
+          }
         }
       }
+      lastX = lmx;
+      lastY = lmy;
     }
     if (!game) {
       startDisable.show = false;
@@ -87,9 +98,12 @@ class WAvoid extends Window {
     super.tick();
   }
   
+  @:access(sk.thenet.ui.UI)
   override public function elementClick(dname:Array<String>, event:EDisplayClick):Void {
     switch (dname[0]) {
       case "start":
+      lastX = Main.wm.ui.lmx - (x + 5);
+      lastY = Main.wm.ui.lmy - (y + 13);
       game = true;
       
       case "unlock":

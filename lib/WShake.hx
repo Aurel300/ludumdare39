@@ -39,8 +39,10 @@ This sentence is false.")
   }
   
   override public function tick():Void {
-    var port = (cast Main.wm.getWindow("portrait"):WPortrait);
-    prog.pos = FM.clampI(prog.pos + (FM.absI(port.dragX) >> 2) - (FM.absI(port.dragY) >> 2), 1, 112);
+    if (show) {
+      var port = (cast Main.wm.getWindow("portrait"):WPortrait);
+      prog.pos = FM.clampI(prog.pos + (FM.absI(port.dragX) >> 2) - (FM.absI(port.dragY) >> 2), 1, 112);
+    }
     check();
     super.tick();
   }

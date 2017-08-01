@@ -149,7 +149,9 @@ class Main extends Application {
     Story.init();
     am = assetManager;
     //preloader = new TNPreloader(this, DEBUG ? "main" : "boot", true);
-    addState(new SBoot(this));
+    if (!DEBUG) {
+      addState(new SBoot(this));
+    }
     addState(wm = new SMain(this));
     addState(new SEnd(this));
     mainLoop();

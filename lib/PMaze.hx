@@ -181,8 +181,8 @@ I promise!"}
         ], instruct:
 "And you wouldn't believe me."}
         ,{w: 3, h: 3, title: "F", icon: Icon.KEY, icons: [
-            None, SpawnAny, None
-           ,None, None, None
+            None, DoorTo("Start"), None
+           ,None, SpawnAny, None
            ,Lock(TrapdoorTo("G")), None, Lock(TrapdoorTo("G"))
         ], instruct:
 "You progressed ...
@@ -294,6 +294,16 @@ door lead to ...?"}
         
         case Goal:
         solve();
+        
+        case Key:
+        state[i].icons[folder.draggedTo] = None;
+        onto.icons[folder.draggedTo] = NONE;
+        onto.doUpdate = true;
+        inv.folder.icons[0] = KEY;
+        inv.folder.doUpdate = true;
+        inv.show = true;
+        Main.wm.focusWindow(inv);
+        return true;
         
         case Lock(_):
         Main.sound("beep");

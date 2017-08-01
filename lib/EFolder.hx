@@ -105,6 +105,7 @@ class EFolder extends UIElement {
     }
     draggedFrom = -1;
     draggedIcon = NONE;
+    doUpdate = true;
   }
   
   override public function tick(display:Display):Void {

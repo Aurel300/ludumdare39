@@ -13,9 +13,10 @@ class Story {
       {t: [Once], a: Main.DEBUG ? [
          UnlockPuzzle("maze0")
         ,StartPuzzle("maze0")
+        ,UnlockPuzzle("shake0")
         //,SetPoints(60)
         ,PlayMusicNR("victory2")
-        ,End(2)
+        //,End(2)
       ] : [
          ShowStory("story1")
         ,SayPlayer("Another lousy Monday.")
