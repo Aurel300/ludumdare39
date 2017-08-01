@@ -8,67 +8,69 @@ import sk.thenet.plat.Platform;
 class SEnd extends State {
   private var bmp:Bitmap;
   private var keybuf:Array<String>;
+  private var endings:Array<Bool>;
   
   public function new(app:Main) {
     super("end", app);
+    endings = [false, false, false, false];
   }
   
   override public function to():Void {
     bmp = Platform.createBitmap(800, 600, Main.pal[4]);
     keybuf = [];
-    Main.font[0].render(bmp, 20, 20, (switch(Story.ENDING) {
-        case 3:
-"And that was ...
+    if (!endings[Story.ENDING - 1]) {
+      Main.sound("fleep");
+      endings[Story.ENDING - 1] = true;
+    }
+    if (Story.ENDING == 2) endings[0] = true;
+    Main.font[0].render(bmp, 20, 20, "And that was ...
 
-$MTHE SECRET ENDING
+$MTHE " + (switch(Story.ENDING) {
+        case 4:
+"EGGSTRA LEEKS
+$A______________________________________________________________________________
+I see you are a man of good taste.
+
+Enjoy the wreckroom.
+
+
+";
+        case 3:
+"SECRET ENDING
 $A______________________________________________________________________________
 Wow, you even got this one. I wonder if you had to look through the
 source code to get here?
 
+Is there anything extra? Naah.
 
-
-
-I hope you enjoyed my Ludum Dare 39 entry
-
-$L<  BATTERYCORP  >
-$A
-Made in 72 hours with Haxe, plustd, and a lot of girlfriend support.
-Thank you for playing!";
+";
         case 2:
-"And that was ...
-
-$MTHE GOOD ENDING
+"GOOD ENDING
 $A______________________________________________________________________________
 Well done.
 
 (Instructions for returning to the game would be here if you got the
 bad ending, but you clearly don't need anything so S I L L Y .)
 
-
-I hope you enjoyed my Ludum Dare 39 entry
-
-$L<  BATTERYCORP  >
-$A
-Made in 72 hours with Haxe, plustd, and a lot of girlfriend support.
-Thank you for playing!";
+";
         case _:
-"And that was ...
-
-$MTHE BAD ENDING
+"BAD ENDING
 $A______________________________________________________________________________
 There is more to do! (Not a whole lot though, don't be disappointed.)
 If you want to try to get the good ending, type the following randomly
 generated letter sequence:
 
   E  G  G  L  E  E  K
-
+";
+      }) + "
 I hope you enjoyed my Ludum Dare 39 entry
 
 $L<  BATTERYCORP  >
 $A
 Made in 72 hours with Haxe, plustd, and a lot of girlfriend support.
-Thank you for playing!";
-      }), Main.font);
+Thank you for playing!
+(" + [ for (i in 0...4) (endings[i] ? '${i + 1}' : "-") ].join(" ") + ")"
++ (endings[0] && endings[1] && endings[2] && endings[3] ? " <-- all endings!" : ""), Main.font);
   }
   
   override public function tick():Void {
@@ -84,6 +86,10 @@ Thank you for playing!";
           keybuf.shift();
         }
         switch keybuf {
+          case ["e", "g", "g", "s", "t", "r", "a"] if (Story.ENDING >= 2):
+          Music.playTrack("wreckroom");
+          Story.ENDING = 4;
+          app.applyState(app.getStateById("end"));
           case ["e", "g", "g", "l", "e", "e", "k"]: app.applyState(app.getStateById("main"));
           case ([_, _, "s", "i", "l", "l", "y"]
             | [_, "s", "i", "l", "l", "y"]

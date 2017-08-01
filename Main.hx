@@ -1,6 +1,5 @@
 import haxe.ds.Vector;
 import sk.thenet.app.*;
-import sk.thenet.app.TNPreloader;
 import sk.thenet.app.asset.Bind as AssetBind;
 import sk.thenet.app.asset.Bitmap as AssetBitmap;
 import sk.thenet.app.asset.Sound as AssetSound;
@@ -11,6 +10,8 @@ import sk.thenet.plat.Platform;
 import lib.*;
 
 class Main extends Application {
+  public static inline var DEBUG:Bool = false;
+  
   // Globals
   public static var am:AssetManager;
   public static var pal:Array<Colour>;
@@ -49,6 +50,7 @@ class Main extends Application {
             ,Embed.getSound("beep", "wav/beep.wav")
             ,Embed.getSound("boing", "wav/boing.wav")
             ,Embed.getSound("buppup", "wav/buppup.wav")
+            ,Embed.getSound("call", "wav/call.wav")
             ,Embed.getSound("fleep", "wav/fleep.wav")
             ,Embed.getSound("quillip", "wav/quillip.wav")
             ,Embed.getSound("tom", "wav/tom.wav")
@@ -146,7 +148,7 @@ class Main extends Application {
     Save.init();
     Story.init();
     am = assetManager;
-    preloader = new TNPreloader(this, "main", true);
+    //preloader = new TNPreloader(this, DEBUG ? "main" : "boot", true);
     addState(new SBoot(this));
     addState(wm = new SMain(this));
     addState(new SEnd(this));

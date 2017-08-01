@@ -21,10 +21,18 @@ class Puzzle {
   
   public function start():Void {
     solving++;
+    switch (id) {
+      case "maze2":
+      Music.playTrack("maze");
+    }
   }
   
   public function stop():Void {
     solving--;
+    switch (id) {
+      case "maze2":
+      Music.playTrack("intro");
+    }
   }
   
   public function solve():Void {

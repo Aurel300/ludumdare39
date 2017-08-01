@@ -10,11 +10,13 @@ class Story {
     ];
   
   public static var PLOT:Array<PlotPoint> = [
-      {t: [Once], a: [
-         UnlockPuzzle("avoid0")
-        ,StartPuzzle("avoid0")
-        ,PlayMusic("intro")
-         /*
+      {t: [Once], a: Main.DEBUG ? [
+         UnlockPuzzle("maze0")
+        ,StartPuzzle("maze0")
+        //,SetPoints(60)
+        ,PlayMusicNR("victory2")
+        ,End(2)
+      ] : [
          ShowStory("story1")
         ,SayPlayer("Another lousy Monday.")
         ,SayPlayer("They don't pay me enough for what I do around here.")
@@ -37,7 +39,7 @@ class Story {
         ,ShowStory("story1")
         ,SayPlayer("I'd better talk to Sharon at dispatching.")
         ,StartPuzzle("maze0")
-        ,OpenWindow("help")*/
+        ,OpenWindow("help")
       ]}, {t: [Once, ClickedOn(SHARON), Not(FlagSet("dispatched"))], a: [
          SetFlag("dispatched", true)
         ,SayPlayer("Hey, Sharon.")
@@ -74,22 +76,22 @@ class Story {
         ,SayPlayer("I should go see Sharon.")
         ,SayPlayer("Dispatching is on floor 2.")
       ]}, {t: [Once, GotPoints(30)], a: [
-        // PlaySound("phone")
-         SayOrigin("You have restored 30 power units.\nFloor 3 is accessible now.", "Sharon (phone)")
+         PlaySound("call")
+        ,SayOrigin("You have restored 30 power units.\nFloor 3 is accessible now.", "Sharon (phone)")
         ,SayPlayer("Oh great, I can access my own office again.")
       ]}, {t: [Once, GotPoints(60)], a: [
-        // PlaySound("phone")
-         SayOrigin("You have restored 60 power units.\nFloor 4 is accessible now.", "Sharon (phone)")
+         PlaySound("call")
+        ,SayOrigin("You have restored 60 power units.\nFloor 4 is accessible now.", "Sharon (phone)")
         ,SayPlayer("Hm, I always wondered what that floor even is.")
       ]}, {t: [Once, GotPoints(100)], a: [
-        // PlaySound("phone")
-         SayOrigin("You have restored all power to Batterycorp.", "Sharon (phone)")
+         PlaySound("call")
+        ,SayOrigin("You have restored all power to Batterycorp.", "Sharon (phone)")
         ,SayOrigin("Good job. All floors are now accessible.", "Sharon (phone)")
         ,SayPlayer("Time to talk to the boss at last!")
       ]}, {t: [Once, GotTo("story2"), ClickedOn(PLANT), Not(FlagSet("eggPlant"))], a: [
-        // PlaySound("egg")
          SayPlayer("There is something weird about this plant ...")
         ,SayPlayer("Ah-ha! There was a microscopic power leak in that plant.")
+        ,PlaySound("fleep")
         ,SayText("Egg (plant) solved!\n1 power unit restored.")
         ,AddPoints(1)
         ,SetFlag("eggPlant", true)
@@ -121,6 +123,7 @@ class Story {
         SayPlayer("I wonder where the light source is in this room.")
       ]}, {t: [ClickedOn(INVISIBLE), Not(FlagSet("eggShadow"))], a: [
          SayPlayer("Judging by that shadow, there should be somebody ... here!")
+        ,PlayMusic("wreckroom")
         ,PlaySound("wizzupI"), SayText("$M\"Spooookyy")
         ,SayPlayer("*gasp*")
         ,PlaySound("wizzupI"), SayText("$M\"What?")
@@ -149,14 +152,18 @@ class Story {
         ,PlaySound("wizzupI"), SayText("$M\"Amazing!")
         ,PlaySound("wizzupI"), SayText("$M\"Thank you!")
         ,SayPlayer("Don't mention it ...")
+        ,PlaySound("fleep")
         ,SayText("Egg (shadow) solved!\n1 power unit restored.")
         ,ShowStory("story6")
         ,OpenWindow("map")
         ,AddPoints(1)
       ]}, {t: [ClickedOn(INVISIBLE), FlagSet("eggShadow")], a: [
-         PlaySound("wizzupI"), SayText("$M\"Thank you for")
+         PlayMusic("wreckroom")
+        ,PlaySound("wizzupI"), SayText("$M\"Thank you for")
         ,PlaySound("wizzupI"), SayText("$M\"fixing my power")
         ,PlaySound("wizzupI"), SayText("$M\"leek.")
+      ]}, {t: [Once, GotTo("story8")], a: [
+        SayPlayer("(could this office be any larger?)")
       ]}, {t: [ClickedOn(BOSS), GotPoints(102)], a: [
          SayPlayer("Hello, boss?")
         ,SayOrigin("Oh, it's you. What do you want?", "The boss")
@@ -181,6 +188,7 @@ class Story {
         ,SayOrigin("There is still plenty of time.", "The boss?")
         ,SayOrigin("Maybe the next one will find them?", "The boss?")
         ,SayOrigin("We can only hope. *click*", "Voice from the phone")
+        ,PlayMusicNR("victory2")
         ,End(2)
       ]}, {t: [ClickedOn(BOSS)], a: [
          SayPlayer("Hello, boss?")
@@ -209,9 +217,21 @@ class Story {
         ,SayOrigin("There is still plenty of time.", "The boss?")
         ,SayOrigin("Maybe the next one will find them?", "The boss?")
         ,SayOrigin("We can only hope. *click*", "Voice from the phone")
+        ,PlayMusicNR("victory1")
         ,End(1)
       ]}, {t: [Once, Solved("lockpk1"), Solved("maze1")], a: [
         UnlockPuzzle("shake0")
+      ]}, {t: [Once, ClickedOn(POWER)], a: [
+         SayPlayer("Ouch!")
+        ,SayPlayer("That hurt.")
+      ]}, {t: [Once, ClickedOn(POWER)], a: [
+        SayPlayer("I shouldn't keep trying to do this.")
+      ]}, {t: [Once, ClickedOn(POWER)], a: [
+        SayPlayer("Not funny ...")
+      ]}, {t: [ClickedOn(POWER)], a: [
+         SayPlayer("You think this is funny? Well then:")
+        ,SayPlayer("Can you find the secret wreckroom track?")
+        ,SayPlayer("Not so funny now, is it.")
       ]}, {t: [Once, Solved("rapid0"), Solved("assmbl1")], a: [
         UnlockPuzzle("avoid0")
       ]}
@@ -292,6 +312,7 @@ class Story {
       case SetPoints(total): POINTS = total; false;
       case PlaySound(id): Main.sound(id); false;
       case PlayMusic(id): Music.playTrack(id); false;
+      case PlayMusicNR(id): Music.playTrack(id, false); false;
       case OpenWindow(id): Main.wm.showWindow(Main.wm.getWindow(id)); false;
       case End(num): Story.ENDING = num; Main.wm.app.applyState(Main.wm.app.getStateById("end")); true;
       case _: false;
@@ -328,6 +349,7 @@ enum Action {
   SetPoints(total:Int);
   PlaySound(id:String);
   PlayMusic(id:String);
+  PlayMusicNR(id:String);
   OpenWindow(id:String);
   End(num:Int);
 }

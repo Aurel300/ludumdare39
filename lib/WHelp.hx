@@ -36,12 +36,15 @@ The icons represent:
 - Current room
 - Game map
 - Battery status
-- This guide",
+- This guide
+- Settings",
 "portrait%Your character portrait
 
 Your portrait is based on
 your username. This window
-has no functionality.",
+has no functionality.
+
+... or does it?",
 "story%Current room
 
 This window shows the room

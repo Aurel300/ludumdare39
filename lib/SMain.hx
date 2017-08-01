@@ -70,7 +70,7 @@ class SMain extends State {
   }
   
   public function solvePuzzle(puzzle:String):Void {
-    if (Save.solved.indexOf(id) == -1) {
+    if (Save.solved.indexOf(puzzle) == -1) {
       Main.sound("buppup");
       Save.solved.push(puzzle);
       Main.puzzlesMap.get(puzzle).solved = true;
@@ -317,11 +317,10 @@ class SMain extends State {
     }
     showWindow(login);
     
-    // Debug setup:
-    login.username = "aurel";
-    login.doLogin();
-    //startPuzzle("maze0");
-    //overworld.enter("The city");
+    if (Main.DEBUG) {
+      login.username = "aurel";
+      login.doLogin();
+    }
   }
   
   override public function tick() {
@@ -329,8 +328,6 @@ class SMain extends State {
       Story.tick();
       overworld.lastClicked = NONE;
     }
-    //Story.POINTS = 102;
-    //overworld.enter("Recreation room");
     desktop.tick(ui.list[0]);
     bubble.tick(bubbleDisplay);
     for (w in windows) {

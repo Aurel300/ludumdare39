@@ -27,6 +27,7 @@ enum RoomIcon {
   Invisible;
   Boss;
   Desk;
+  Bolt;
 }
 
 class PMaze extends Puzzle {
@@ -55,7 +56,7 @@ class PMaze extends Puzzle {
         ,{w: 9, h: 4, title: "The city", icon: Icon.SPEECH, icons: [
            None, None, None, None, Batterycorp, None, None, None, None
           ,None, Puzzle("avoid0"), Puzzle("lockpk3"), Puzzle("lockpk0"), SpawnAny, Puzzle("assmbl0"), Puzzle("shake0"), Puzzle("maze2"), None
-          ,None, Puzzle("lockpk4"), Puzzle("rapid0"), Puzzle("lockpk1"), Puzzle("maze1"), Puzzle("assmbl1"), Puzzle("lockpk2"), None, None
+          ,None, Puzzle("lockpk4"), Puzzle("rapid0"), Puzzle("lockpk1"), Puzzle("maze1"), Puzzle("assmbl1"), Puzzle("lockpk2"), Bolt, None
           ,None, None, None, None, None, None, None, None, None
         ], instruct: null}
         ,{w: 3, h: 2, title: "Recreation room", icon: Icon.SPEECH, icons: [
@@ -211,7 +212,7 @@ door lead to ...?"}
   public function new(num:Int) {
     super('maze$num');
     points = (switch (num) {
-        case 1: 5;
+        case 1: sequel = "maze2"; 5;
         case 2: 10;
         case _: 0;
       });
@@ -242,6 +243,7 @@ door lead to ...?"}
         case Invisible: INVISIBLE;
         case Boss: BOSS;
         case Desk: DESK;
+        case Bolt: POWER;
       });
   }
   
@@ -256,6 +258,9 @@ door lead to ...?"}
   
   public function enter(title:String):Void {
     Main.sound("tom");
+    if (title == "The lift") {
+      Music.playTrack("lift");
+    }
     var roomId = getRoomId(title);
     placePlayer(roomId, state[statePlayer].title);
     windows[roomId].show = true;
